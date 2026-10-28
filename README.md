@@ -72,6 +72,22 @@ uv run --locked python -m http.server 8000 --bind 127.0.0.1
 Videos are generated files;
 rerender them on a fresh checkout or include them separately when sharing a page.
 
+## Finish an animation
+
+Iterate with previews while reviewing the explanation. Once you are satisfied, the
+agent renders the final video at high quality, checks playback and representative
+frames, updates any HTML asset links, and cleans that scene's partial movie caches:
+
+```sh
+make render FILE=topics/2026/10/attention/animation.py SCENE=Attention QUALITY=h
+make clean FILE=topics/2026/10/attention/animation.py SCENE=Attention
+```
+
+Use the same `OUTPUT_DIR` and `MEDIA` overrides for rendering and cleanup. Cleanup
+preserves final videos, images, previews, other scenes, and shared TeX caches. Agents
+also remove their scratch files and unused previews after checking asset references.
+Research-only and still-image tasks use only the relevant parts of this workflow.
+
 ## Checks
 
 ```sh
@@ -79,7 +95,8 @@ make format
 make check
 ```
 
-Checks cover formatting, YAML/TOML validity, whitespace, and private-key detection.
+Checks cover formatting, YAML/TOML/JSON validity, whitespace, private-key detection,
+and cleanup boundary tests.
 Agents also check technical claims and inspect rendered output for animation work.
 Add implementation tests when a topic needs them.
 
