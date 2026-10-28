@@ -2,6 +2,7 @@ FILE ?=
 SCENE ?=
 QUALITY ?= h
 OUTPUT_DIR ?= $(patsubst %/,%,$(dir $(FILE)))
+IMAGES_DIR ?= $(OUTPUT_DIR)/images
 MEDIA ?= $(OUTPUT_DIR)/media
 VERBOSE ?= 0
 OPEN ?= 0
@@ -20,10 +21,11 @@ help:
 	@echo 'setup       Install locked dependencies and Git hooks'
 	@echo 'preview     Render 480p video; FILE and SCENE required'
 	@echo 'render      Save OUTPUT_DIR/SCENE.mp4; QUALITY=h by default'
-	@echo 'frame       Save the last frame as OUTPUT_DIR/SCENE.png'
+	@echo 'frame       Save the last frame as IMAGES_DIR/SCENE.png'
 	@echo 'list        List scene classes in FILE'
 	@echo 'clean       Remove only this scene partial movie caches; FILE and SCENE required'
-	@echo 'Options: OUTPUT_DIR defaults to the source folder; MEDIA overrides the cache folder'
+	@echo 'Options: OUTPUT_DIR defaults to the source folder; IMAGES_DIR defaults to OUTPUT_DIR/images'
+	@echo '         MEDIA overrides the cache folder'
 	@echo '         VERBOSE=1 enables debug logs; OPEN=1 opens rendered output'
 	@echo '         QUALITY=l/m/h/p/k selects 480p/720p/1080p/1440p/2160p'
 	@echo 'check       Run pre-commit, type checks, and tests'
@@ -72,8 +74,8 @@ render: require-scene
 	$(MANIM) -q$(QUALITY) $(FLAGS) -o "$$(cd "$(OUTPUT_DIR)" && pwd)/$(SCENE).mp4" "$(FILE)" "$(SCENE)"
 
 frame: require-scene
-	@mkdir -p "$(OUTPUT_DIR)"
-	$(MANIM) -q$(QUALITY) -s $(FLAGS) -o "$$(cd "$(OUTPUT_DIR)" && pwd)/$(SCENE).png" "$(FILE)" "$(SCENE)"
+	@mkdir -p "$(IMAGES_DIR)"
+	$(MANIM) -q$(QUALITY) -s $(FLAGS) -o "$$(cd "$(IMAGES_DIR)" && pwd)/$(SCENE).png" "$(FILE)" "$(SCENE)"
 
 clean: require-scene
 	uv run --locked python scripts/clean_animation.py "$(FILE)" "$(SCENE)" --media "$(MEDIA)"

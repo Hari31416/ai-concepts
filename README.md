@@ -75,9 +75,10 @@ make render FILE=topics/2026/10/attention/animation.py SCENE=Attention
 ```
 
 Preview renders a 480p video. Render defaults to 1080p; set `QUALITY=m` for 720p.
-Final videos and frames are saved beside the scene source as `Attention.mp4` and
-`Attention.png`. Set `OUTPUT_DIR=...` to change that location. Preview videos and
-render caches stay in `OUTPUT_DIR/media/`; set `MEDIA=...` to override it.
+Final videos are saved beside the scene source as `Attention.mp4`, and frames
+are saved in `images/Attention.png`. Set `OUTPUT_DIR=...` or `IMAGES_DIR=...`
+to change those locations. Preview videos and render caches stay in `OUTPUT_DIR/media/`;
+set `MEDIA=...` to override it.
 Use `OPEN=1` to open output after rendering and `VERBOSE=1` for debug logs.
 These options work with preview, render, and frame. For direct CLI access:
 

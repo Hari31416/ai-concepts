@@ -23,6 +23,7 @@ of a concept. Never build artifacts for the sake of creating them.
 - Research, notes, implementations, figures, animations, and HTML explanations are
   independent options. Implementation is optional. A diagram may need only a
   checked illustrative example.
+- HTML explanations (`index.html`) should only be created if explicitly requested.
 - Keep topic work in `topics/<year>/<month>/<topic-slug>/`, using a four-digit year
   and two-digit month, such as `topics/2026/10/attention/`. Date new topics by their
   creation month; continue existing topics in their original folder.
@@ -31,7 +32,8 @@ of a concept. Never build artifacts for the sake of creating them.
   - `scenes.md` for storyboard plans and scene scripts.
   - `animation.py` for Manim scenes.
   - `toy.py` for minimal reference implementations.
-  - `index.html` for topic web pages.
+  - `index.html` for topic web pages (only when explicitly requested).
+  - `images/` for exported still frames and diagrams to keep the topic directory clean.
 - Add shared helpers only after actual reuse appears. Introduce Pydantic when
   structured validation is needed, and tests when there is behavior to verify.
 
@@ -64,8 +66,9 @@ Run render commands from the repository root so topic scenes can import `shared.
    higher quality they requested. Existing instructions to finalize count as approval;
    avoid asking again. During feedback, retain caches for quick revisions.
 4. Verify the final video plays, has the requested resolution, and contains the
-   intended ending. Inspect representative frames from the final render. If there
-   is an HTML page, point it at the final assets and verify those links in a browser.
+   intended ending. Inspect representative frames from the final render. If an HTML
+   page was explicitly requested, point it at the final assets and verify those links
+   in a browser.
 5. After the final output passes review, run `make clean FILE=... SCENE=...` with
    the same output/media overrides used for rendering. It removes only that scene's
    partial movie caches; shared TeX caches, previews, and final assets stay intact.
@@ -84,14 +87,14 @@ When animation code becomes large or spans several distinct phases, adopt a modu
 - Split separate stages into distinct scene classes or individual files under a topic `scenes/` directory (for example `scenes/mechanism.py`).
 - Extract composite mobjects, reusable diagrams, or visual helpers into a topic helper module, or import shared primitives from `shared.theme`.
 - Keep individual scenes independently renderable with `make preview FILE=... SCENE=...` so iteration stays fast.
-- Use a root `animation.py` to import or coordinate the full sequence if a combined render is required.
+- It is good to keep different scenes for modularity, but always provide a final consolidated Scene class in `animation.py` bringing together each scene into a single final video for the topic, alongside the individual scene classes.
 
 ## Topic modalities and completion criteria
 
-- **Research and notes:** Save in `notes.md`. Must include concept definitions, mathematical formulations, primary source links, and checked numerical toy examples.
+- **Research and notes:** Save in `notes.md`. Focus on conceptual intuition, core mechanics, and primary source links. Complex math and formal derivations are not needed unless explicitly requested.
 - **Implementations:** Save in `toy.py`. Must provide typed, runnable Python code with assertions or pytest tests verifying values against theoretical math.
 - **Animations:** Preview with `make preview`, fix transitions and layout, render final output at target quality with `make render`, and clean scene caches with `make clean`.
-- **HTML explanations:** Save in `index.html`. Link `shared/theme.css` or use theme tokens, keep assets relative, ensure responsive narrow-screen layout, and verify via `python -m http.server 8000`.
+- **HTML explanations:** Only create if explicitly requested. Save in `index.html`. Link `shared/theme.css` or use theme tokens, keep assets relative, ensure responsive narrow-screen layout, and verify via `python -m http.server 8000`.
 
 ## Completion and maintenance
 
