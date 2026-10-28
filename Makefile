@@ -5,7 +5,7 @@ OUTPUT_DIR ?= $(patsubst %/,%,$(dir $(FILE)))
 MEDIA ?= $(OUTPUT_DIR)/media
 VERBOSE ?= 0
 OPEN ?= 0
-MANIM = uv run --locked manim
+MANIM = uv run --locked python -m manim
 FLAGS = --media_dir "$(MEDIA)"
 ifeq ($(VERBOSE),1)
 FLAGS += --verbosity DEBUG

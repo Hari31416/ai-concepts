@@ -17,6 +17,12 @@ repository. Keep each request as small as its learning goal allows.
 - Use uv and Black. Use standard logging for Python utilities. Introduce Pydantic
   when structured validation is needed, and tests when there is behavior to verify.
 
+## Visual style
+
+Before creating or changing animation, figure, or HTML visuals, read `STYLE.md`.
+Use `shared/theme.py` for Manim defaults and matching HTML colors. Run render
+commands from the repository root so topic scenes can import `shared.theme`.
+
 ## Animation skills
 
 - When planning an animation, read `.agents/skills/manim-composer/SKILL.md`.

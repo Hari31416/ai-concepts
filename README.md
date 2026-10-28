@@ -39,6 +39,26 @@ Use the creation year and a two-digit month; keep later updates in the same fold
 Create only useful files. A topic might have `notes.md`,
 `scenes.md`, `animation.py`, or an optional `index.html`; none is mandatory.
 
+## Visual style
+
+`STYLE.md` explains palette meanings, typography, layout, animation, and HTML
+conventions. `shared/theme.py` holds the reusable values. Run commands from the
+project root so topic scenes can import it:
+
+```python
+from manim import Scene
+from shared.theme import ACCENT, TITLE_SIZE, apply_theme, text
+
+
+class Attention(Scene):
+    def construct(self) -> None:
+        apply_theme(self)
+        self.add(text("Attention", font_size=TITLE_SIZE, color=ACCENT))
+```
+
+Use `text()` and `math()` for themed text and equations, or pass the shared constants
+to Manim constructors directly. Helpers leave Manim's global defaults unchanged.
+
 ## Render
 
 Once a topic has a scene, run these commands from the project root. Substitute its
