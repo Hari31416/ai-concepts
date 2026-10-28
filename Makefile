@@ -2,6 +2,7 @@ FILE ?=
 SCENE ?=
 QUALITY ?= h
 OUTPUT_DIR ?= $(patsubst %/,%,$(dir $(FILE)))
+VIDEO_DIR ?= $(OUTPUT_DIR)/video
 IMAGES_DIR ?= $(OUTPUT_DIR)/images
 MEDIA ?= $(OUTPUT_DIR)/media
 VERBOSE ?= 0
@@ -20,12 +21,12 @@ endif
 help:
 	@echo 'setup       Install locked dependencies and Git hooks'
 	@echo 'preview     Render 480p video; FILE and SCENE required'
-	@echo 'render      Save OUTPUT_DIR/SCENE.mp4; QUALITY=h by default'
+	@echo 'render      Save VIDEO_DIR/SCENE.mp4; QUALITY=h by default'
 	@echo 'frame       Save the last frame as IMAGES_DIR/SCENE.png'
 	@echo 'list        List scene classes in FILE'
 	@echo 'clean       Remove only this scene partial movie caches; FILE and SCENE required'
-	@echo 'Options: OUTPUT_DIR defaults to the source folder; IMAGES_DIR defaults to OUTPUT_DIR/images'
-	@echo '         MEDIA overrides the cache folder'
+	@echo 'Options: OUTPUT_DIR defaults to the source folder; VIDEO_DIR defaults to OUTPUT_DIR/video'
+	@echo '         IMAGES_DIR defaults to OUTPUT_DIR/images; MEDIA overrides the cache folder'
 	@echo '         VERBOSE=1 enables debug logs; OPEN=1 opens rendered output'
 	@echo '         QUALITY=l/m/h/p/k selects 480p/720p/1080p/1440p/2160p'
 	@echo 'check       Run pre-commit, type checks, and tests'
@@ -70,8 +71,8 @@ preview: require-scene
 	$(MANIM) -ql $(FLAGS) "$(FILE)" "$(SCENE)"
 
 render: require-scene
-	@mkdir -p "$(OUTPUT_DIR)"
-	$(MANIM) -q$(QUALITY) $(FLAGS) -o "$$(cd "$(OUTPUT_DIR)" && pwd)/$(SCENE).mp4" "$(FILE)" "$(SCENE)"
+	@mkdir -p "$(VIDEO_DIR)"
+	$(MANIM) -q$(QUALITY) $(FLAGS) -o "$$(cd "$(VIDEO_DIR)" && pwd)/$(SCENE).mp4" "$(FILE)" "$(SCENE)"
 
 frame: require-scene
 	@mkdir -p "$(IMAGES_DIR)"

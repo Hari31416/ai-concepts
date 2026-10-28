@@ -33,6 +33,7 @@ of a concept. Never build artifacts for the sake of creating them.
   - `animation.py` for Manim scenes.
   - `toy.py` for minimal reference implementations.
   - `index.html` for topic web pages (only when explicitly requested).
+  - `video/` for rendered videos (both individual scenes and the consolidated video).
   - `images/` for exported still frames and diagrams to keep the topic directory clean.
 - Add shared helpers only after actual reuse appears. Introduce Pydantic when
   structured validation is needed, and tests when there is behavior to verify.
@@ -62,8 +63,9 @@ Run render commands from the repository root so topic scenes can import `shared.
 2. Build a low-quality preview. Inspect representative frames and watch transitions
    and pacing. Fix clipping, unreadable labels, and incorrect values before sharing.
 3. Share the preview for feedback and iterate. When the user is satisfied, render
-   the final animation with `make render FILE=... SCENE=... QUALITY=h`, or the
-   higher quality they requested. Existing instructions to finalize count as approval;
+   the final animation with `make render FILE=... SCENE=... QUALITY=h`. Render
+   and keep both the individual scene videos and the consolidated final video in
+   the `video/` subfolder. Existing instructions to finalize count as approval;
    avoid asking again. During feedback, retain caches for quick revisions.
 4. Verify the final video plays, has the requested resolution, and contains the
    intended ending. Inspect representative frames from the final render. If an HTML
@@ -87,7 +89,7 @@ When animation code becomes large or spans several distinct phases, adopt a modu
 - Split separate stages into distinct scene classes or individual files under a topic `scenes/` directory (for example `scenes/mechanism.py`).
 - Extract composite mobjects, reusable diagrams, or visual helpers into a topic helper module, or import shared primitives from `shared.theme`.
 - Keep individual scenes independently renderable with `make preview FILE=... SCENE=...` so iteration stays fast.
-- It is good to keep different scenes for modularity, but always provide a final consolidated Scene class in `animation.py` bringing together each scene into a single final video for the topic, alongside the individual scene classes.
+- It is good to keep different scenes for modularity, and always provide a final consolidated Scene class in `animation.py` bringing together each scene into a single final video for the topic. Prefer keeping and rendering both the individual scene videos and the consolidated video in the topic `video/` directory.
 
 ## Topic modalities and completion criteria
 
