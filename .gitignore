@@ -1,0 +1,18 @@
+# Local environments and secrets
+.venv/
+.env
+.env.*
+!.env.example
+.DS_Store
+
+# Generated files
+__pycache__/
+*.py[cod]
+media/
+work/
+logs/
+.pytest_cache/
+.mypy_cache/
+
+# Final topic renders; keep authored image assets in Git
+topics/**/*.mp4

@@ -1,0 +1,17 @@
+[project]
+name = "ai-concepts"
+version = "0.1.0"
+description = "Explore and explain AI concepts with coding agents and Manim."
+requires-python = ">=3.12,<3.14"
+dependencies = ["manim>=0.19,<0.23"]
+
+[dependency-groups]
+dev = ["black>=25,<27", "pre-commit>=4,<5"]
+
+[tool.uv]
+package = false
+
+[tool.black]
+line-length = 88
+target-version = ["py312"]
+extend-exclude = '/(\.agents/skills|media|work)/'
