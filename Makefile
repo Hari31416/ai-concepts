@@ -14,7 +14,7 @@ ifeq ($(OPEN),1)
 FLAGS += --preview
 endif
 
-.PHONY: help setup hooks pre-commit check format preview render frame list clean require-file require-scene
+.PHONY: help setup hooks pre-commit check test typecheck format preview render frame list clean require-file require-scene
 
 help:
 	@echo 'setup       Install locked dependencies and Git hooks'
@@ -26,7 +26,9 @@ help:
 	@echo 'Options: OUTPUT_DIR defaults to the source folder; MEDIA overrides the cache folder'
 	@echo '         VERBOSE=1 enables debug logs; OPEN=1 opens rendered output'
 	@echo '         QUALITY=l/m/h/p/k selects 480p/720p/1080p/1440p/2160p'
-	@echo 'check       Run formatting and repository checks'
+	@echo 'check       Run pre-commit, type checks, and tests'
+	@echo 'test        Run pytest test suite'
+	@echo 'typecheck   Run mypy static type analysis'
 	@echo 'format      Format project Python files'
 	@echo 'hooks       Install Git hooks'
 	@echo 'pre-commit  Run hooks on all tracked files'
@@ -42,8 +44,13 @@ hooks:
 pre-commit:
 	uv run --locked pre-commit run --all-files
 
-check: pre-commit
-	uv run --locked python -m unittest discover -s tests -v
+test:
+	uv run --locked pytest
+
+typecheck:
+	uv run --locked mypy scripts shared tests
+
+check: pre-commit typecheck test
 
 format:
 	uv run --locked black .

@@ -36,28 +36,31 @@ Ask your coding agent for the output you want, for example:
 The agent reads `AGENTS.md` and the relevant existing Manim skills. Work goes in
 `topics/<year>/<month>/<topic-slug>/`, for example `topics/2026/10/attention/`.
 Use the creation year and a two-digit month; keep later updates in the same folder.
-Create only useful files. A topic might have `notes.md`,
-`scenes.md`, `animation.py`, or an optional `index.html`; none is mandatory.
+Create only useful files. Standard filenames keep topics predictable:
+`notes.md`, `scenes.md`, `animation.py` (or a modular `scenes/` folder for large animations),
+`toy.py`, and `index.html`.
 
 ## Visual style
 
 `STYLE.md` explains palette meanings, typography, layout, animation, and HTML
-conventions. `shared/theme.py` holds the reusable values. Run commands from the
-project root so topic scenes can import it:
+conventions. `shared/theme.py` holds reusable constants and helpers; `shared/theme.css`
+provides matching styles for HTML pages. Run commands from the project root so topic
+scenes can import the theme:
 
 ```python
 from manim import Scene
-from shared.theme import ACCENT, TITLE_SIZE, apply_theme, text
+from shared.theme import ACCENT, TITLE_SIZE, apply_theme, panel, text
 
 
 class Attention(Scene):
     def construct(self) -> None:
         apply_theme(self)
+        self.add(panel(width=8.0, height=4.0))
         self.add(text("Attention", font_size=TITLE_SIZE, color=ACCENT))
 ```
 
-Use `text()` and `math()` for themed text and equations, or pass the shared constants
-to Manim constructors directly. Helpers leave Manim's global defaults unchanged.
+Use `text()`, `math()`, `panel()`, and `title()` for themed elements, or pass the shared
+constants to Manim constructors directly. Helpers leave Manim's global defaults unchanged.
 
 ## Render
 
@@ -112,11 +115,13 @@ Research-only and still-image tasks use only the relevant parts of this workflow
 
 ```sh
 make format
+make test
+make typecheck
 make check
 ```
 
 Checks cover formatting, YAML/TOML/JSON validity, whitespace, private-key detection,
-and cleanup boundary tests.
+Mypy static type analysis, and pytest unit tests.
 Agents also check technical claims and inspect rendered output for animation work.
 Add implementation tests when a topic needs them.
 

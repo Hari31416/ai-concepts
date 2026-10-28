@@ -7,10 +7,11 @@ Treat these as starting defaults; adapt them when the explanation needs it.
 ## Shared defaults
 
 `shared/theme.py` is the source of truth for colors, font sizes, spacing, and timing.
-Import its constants and helpers in Manim scenes. For HTML or SVG, use the same hex
-values as CSS variables. Keep any intentional topic-specific choices with that topic.
-`manim.cfg` repeats the background so unthemed scenes start with the same color;
-update it too when changing `BACKGROUND`.
+`shared/theme.css` provides matching CSS variables and styles for HTML pages.
+Import theme constants and helpers in Manim scenes. For HTML or SVG, use the matching
+CSS variables or link `shared/theme.css`. Keep intentional topic-specific choices with
+that topic. `manim.cfg` repeats the background so unthemed scenes start with the same
+color; update it too when changing `BACKGROUND`.
 
 | Token                        | Meaning                                                   |
 | ---------------------------- | --------------------------------------------------------- |
@@ -26,6 +27,9 @@ For example, a target model can use ENTITY_A and a draft model ENTITY_B; both ke
 those colors in the page, video, and figures. Use outcome colors only for outcomes.
 Pair meaningful color with labels, shapes, or line styles. Heatmaps need a labeled
 scale; choose a sequential or diverging palette that matches the quantity.
+
+Use `panel()` and `surrounding_panel()` from `shared.theme` to draw containers and
+boundaries, and `title()` to place standardized scene headers.
 
 ## Typography and layout
 
@@ -48,9 +52,17 @@ and pause after equations or important results. Shared durations are starting po
 allow more time for reading and dense reasoning. Use emphasis briefly, then return
 to the entity's usual color. Prefer simple fades and transforms over decorative motion.
 
+When an animation becomes large or spans several distinct phases, adopt a modular
+structure:
+
+- Split separate stages into distinct scene classes or separate files under `scenes/`.
+- Extract reusable composite mobjects or diagrams into a topic helper module.
+- Keep individual scenes independently renderable for fast preview cycles.
+
 ## HTML explanations
 
-Match the palette and entity meanings. Use a readable text column around 70ch wide,
+Match the palette and entity meanings. Link `shared/theme.css` to adopt default styling,
+or use matching CSS variables directly. Use a readable text column around 70ch wide,
 body text of at least 18px, and line height around 1.6. Scale diagrams and videos to
 the container, keep controls available, and let readers start video playback.
 Use meaningful captions and image alternative text. Check narrow screens and avoid

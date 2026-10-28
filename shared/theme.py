@@ -3,7 +3,15 @@
 Importing this module does not change Manim's global defaults.
 """
 
-from manim import MathTex, Scene, Text
+from manim import (
+    UP,
+    MathTex,
+    Mobject,
+    RoundedRectangle,
+    Scene,
+    SurroundingRectangle,
+    Text,
+)
 
 # Semantic colors. Keep these meanings consistent within a topic.
 BACKGROUND = "#0B1020"
@@ -18,6 +26,20 @@ ENTITY_A = "#7DD3FC"
 ENTITY_B = "#C4B5FD"
 ENTITY_C = "#FDBA74"
 ENTITY_COLORS = (ENTITY_A, ENTITY_B, ENTITY_C)
+
+CSS_VARIABLES: dict[str, str] = {
+    "--bg": BACKGROUND,
+    "--surface": SURFACE,
+    "--text": TEXT,
+    "--muted": MUTED,
+    "--border": BORDER,
+    "--accent": ACCENT,
+    "--success": SUCCESS,
+    "--error": ERROR,
+    "--entity-a": ENTITY_A,
+    "--entity-b": ENTITY_B,
+    "--entity-c": ENTITY_C,
+}
 
 FONT = "Arial"
 TITLE_SIZE = 44
@@ -37,7 +59,7 @@ READ_PAUSE = 1.5
 
 def apply_theme(scene: Scene) -> None:
     """Set the background without changing global text or animation defaults."""
-    scene.camera.background_color = BACKGROUND
+    setattr(scene.camera, "background_color", BACKGROUND)
 
 
 def text(
@@ -56,3 +78,54 @@ def math(
 ) -> MathTex:
     """Create a LaTeX equation using the project's size and foreground color."""
     return MathTex(expression, font_size=font_size, color=color)
+
+
+def title(content: str, *, color: str = TEXT) -> Text:
+    """Create a themed title positioned at the top of the scene."""
+    return text(content, font_size=TITLE_SIZE, color=color, weight="BOLD").to_edge(
+        UP, buff=MARGIN
+    )
+
+
+def panel(
+    width: float,
+    height: float,
+    *,
+    fill_color: str = SURFACE,
+    fill_opacity: float = FILL_OPACITY,
+    stroke_color: str = BORDER,
+    stroke_width: float = STROKE_WIDTH,
+    corner_radius: float = 0.2,
+) -> RoundedRectangle:
+    """Create a themed container panel for grouping mobjects."""
+    return RoundedRectangle(
+        width=width,
+        height=height,
+        corner_radius=corner_radius,
+        fill_color=fill_color,
+        fill_opacity=fill_opacity,
+        stroke_color=stroke_color,
+        stroke_width=stroke_width,
+    )
+
+
+def surrounding_panel(
+    mobject: Mobject,
+    *,
+    buff: float = GAP,
+    fill_color: str = SURFACE,
+    fill_opacity: float = FILL_OPACITY,
+    stroke_color: str = BORDER,
+    stroke_width: float = STROKE_WIDTH,
+    corner_radius: float = 0.15,
+) -> SurroundingRectangle:
+    """Create a themed boundary surrounding an active or grouped mobject."""
+    return SurroundingRectangle(
+        mobject,
+        buff=buff,
+        color=stroke_color,
+        fill_color=fill_color,
+        fill_opacity=fill_opacity,
+        stroke_width=stroke_width,
+        corner_radius=corner_radius,
+    )

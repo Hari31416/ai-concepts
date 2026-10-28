@@ -11,17 +11,21 @@ repository. Keep each request as small as its learning goal allows.
   checked illustrative example.
 - Keep topic work in `topics/<year>/<month>/<topic-slug>/`, using a four-digit year
   and two-digit month, such as `topics/2026/10/attention/`. Date new topics by their
-  creation month; continue existing topics in their original folder. Use descriptive
-  filenames. Add shared helpers only after actual reuse appears. Leave unrelated
-  blog work in its repository.
-- Use uv and Black. Use standard logging for Python utilities. Introduce Pydantic
-  when structured validation is needed, and tests when there is behavior to verify.
+  creation month; continue existing topics in their original folder.
+- Use standardized filenames when creating topic artifacts:
+  - `notes.md` for background research, formulations, and references.
+  - `scenes.md` for storyboard plans and scene scripts.
+  - `animation.py` for Manim scenes.
+  - `toy.py` for minimal reference implementations.
+  - `index.html` for topic web pages.
+- Add shared helpers only after actual reuse appears. Introduce Pydantic when
+  structured validation is needed, and tests when there is behavior to verify.
 
 ## Visual style
 
 Before creating or changing animation, figure, or HTML visuals, read `STYLE.md`.
-Use `shared/theme.py` for Manim defaults and matching HTML colors. Run render
-commands from the repository root so topic scenes can import `shared.theme`.
+Use `shared/theme.py` for Manim defaults and `shared/theme.css` for HTML pages.
+Run render commands from the repository root so topic scenes can import `shared.theme`.
 
 ## Animation skills
 
@@ -57,28 +61,25 @@ commands from the repository root so topic scenes can import `shared.theme`.
    or blocked on a render, state what remains; keep useful intermediate work.
 
 Apply only the steps relevant to the request. A notes-only task needs no rendering,
-and a requested still figure needs no video. An implementation is always optional.
+and a requested still figure needs no video.
 
-## Optional HTML explanations
+### Modular animation structure
 
-When the user requests a topic page, create `index.html` inside that topic. Explain
-with readable prose and whichever equations, images, diagrams, videos, or small
-interactions help. Use Manim or another suitable technique for individual visuals.
-Keep assets beside the page with relative links; Manim media can stay in the topic's
-`media/` directory. Prefer plain HTML, CSS, SVG, and JavaScript. Introduce a frontend
-build only when a concrete need justifies it. Check the page in a browser and verify
-asset loading, narrow-screen layout, and interactions.
+When animation code becomes large or spans several distinct phases, adopt a modular layout:
+
+- Split separate stages into distinct scene classes or individual files under a topic `scenes/` directory (for example `scenes/mechanism.py`).
+- Extract composite mobjects, reusable diagrams, or visual helpers into a topic helper module, or import shared primitives from `shared.theme`.
+- Keep individual scenes independently renderable with `make preview FILE=... SCENE=...` so iteration stays fast.
+- Use a root `animation.py` to import or coordinate the full sequence if a combined render is required.
+
+## Topic modalities and completion criteria
+
+- **Research and notes:** Save in `notes.md`. Must include concept definitions, mathematical formulations, primary source links, and checked numerical toy examples.
+- **Implementations:** Save in `toy.py`. Must provide typed, runnable Python code with assertions or pytest tests verifying values against theoretical math.
+- **Animations:** Preview with `make preview`, fix transitions and layout, render final output at target quality with `make render`, and clean scene caches with `make clean`.
+- **HTML explanations:** Save in `index.html`. Link `shared/theme.css` or use theme tokens, keep assets relative, ensure responsive narrow-screen layout, and verify via `python -m http.server 8000`.
 
 ## Completion and maintenance
 
-- Run relevant checks and summarize what changed, how to use it, and any unverified
-  parts. Use `make help` for rendering and repository commands.
-- Keep generated media and temporary experiments out of Git. Keep source assets
-  needed to reproduce explanations. Store source links and assumptions in the
-  topic's notes when the task involves research.
-- Add dependencies and conventions as needs appear. Voiceover and presentation
-  infrastructure are outside the initial scope.
-- When committing, use `<type>(<scope>): <subject>` with a subject of at most 50
-  characters. Types: chore, docs, feat, fix, refactor, style, test. Scopes: backend,
-  frontend, infra, general. Optional body uses bullet points; optional footer records
-  issues or breaking changes.
+- Run `make check` (formatting, hooks, mypy, and pytest) and summarize what changed, how to use it, and any unverified parts. Use `make help` for command options.
+- Keep generated media and temporary experiments out of Git. Keep source assets needed to reproduce explanations.
