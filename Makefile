@@ -14,7 +14,7 @@ ifeq ($(OPEN),1)
 FLAGS += --preview
 endif
 
-.PHONY: help setup hooks pre-commit check format preview render frame list require-file require-scene
+.PHONY: help setup hooks pre-commit check format preview render frame list clean require-file require-scene
 
 help:
 	@echo 'setup       Install locked dependencies and Git hooks'
@@ -22,6 +22,7 @@ help:
 	@echo 'render      Save OUTPUT_DIR/SCENE.mp4; QUALITY=h by default'
 	@echo 'frame       Save the last frame as OUTPUT_DIR/SCENE.png'
 	@echo 'list        List scene classes in FILE'
+	@echo 'clean       Remove only this scene partial movie caches; FILE and SCENE required'
 	@echo 'Options: OUTPUT_DIR defaults to the source folder; MEDIA overrides the cache folder'
 	@echo '         VERBOSE=1 enables debug logs; OPEN=1 opens rendered output'
 	@echo '         QUALITY=l/m/h/p/k selects 480p/720p/1080p/1440p/2160p'
@@ -42,6 +43,7 @@ pre-commit:
 	uv run --locked pre-commit run --all-files
 
 check: pre-commit
+	uv run --locked python -m unittest discover -s tests -v
 
 format:
 	uv run --locked black .
@@ -65,3 +67,6 @@ render: require-scene
 frame: require-scene
 	@mkdir -p "$(OUTPUT_DIR)"
 	$(MANIM) -q$(QUALITY) -s $(FLAGS) -o "$$(cd "$(OUTPUT_DIR)" && pwd)/$(SCENE).png" "$(FILE)" "$(SCENE)"
+
+clean: require-scene
+	uv run --locked python scripts/clean_animation.py "$(FILE)" "$(SCENE)" --media "$(MEDIA)"
