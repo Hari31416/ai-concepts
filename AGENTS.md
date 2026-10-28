@@ -3,6 +3,20 @@
 This is a growing collection for understanding AI concepts. Work directly in the
 repository. Keep each request as small as its learning goal allows.
 
+## Pedagogical purpose and depth
+
+Every animation, diagram, toy implementation, or page exists to unlock genuine understanding
+of a concept. Never build artifacts for the sake of creating them.
+
+- **Mechanism over ornament:** Choose visuals, motion, and structure that illuminate
+  how the concept works—its intuition, data flow, and mathematical heart—rather than
+  decorative flourishes.
+- **Calibrated depth:** Go deep enough to reveal the core machinery and design rationale,
+  without drowning in tangential rabbit holes, exhaustive survey literature, or pedantic
+  edge cases.
+- **Creative explanatory framing:** Favor tactile metaphors, minimal worked examples with
+  real numbers, and side-by-side correspondences that make abstract math concrete.
+
 ## Start with the request
 
 - Read the existing topic before editing. Create only the files the task needs.
