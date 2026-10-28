@@ -34,7 +34,9 @@ Ask your coding agent for the output you want, for example:
 - "Implement a toy example to verify the values in this animation."
 
 The agent reads `AGENTS.md` and the relevant existing Manim skills. Work goes in
-`topics/<topic-slug>/`. Create only useful files. A topic might have `notes.md`,
+`topics/<year>/<month>/<topic-slug>/`, for example `topics/2026/10/attention/`.
+Use the creation year and a two-digit month; keep later updates in the same folder.
+Create only useful files. A topic might have `notes.md`,
 `scenes.md`, `animation.py`, or an optional `index.html`; none is mandatory.
 
 ## Render
@@ -43,10 +45,10 @@ Once a topic has a scene, run these commands from the project root. Substitute i
 file and class name:
 
 ```sh
-make list FILE=topics/attention/animation.py
-make preview FILE=topics/attention/animation.py SCENE=Attention
-make frame FILE=topics/attention/animation.py SCENE=Attention
-make render FILE=topics/attention/animation.py SCENE=Attention
+make list FILE=topics/2026/10/attention/animation.py
+make preview FILE=topics/2026/10/attention/animation.py SCENE=Attention
+make frame FILE=topics/2026/10/attention/animation.py SCENE=Attention
+make render FILE=topics/2026/10/attention/animation.py SCENE=Attention
 ```
 
 Preview renders a 480p video. Render defaults to 1080p; set `QUALITY=m` for 720p.

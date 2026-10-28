@@ -9,8 +9,11 @@ repository. Keep each request as small as its learning goal allows.
 - Research, notes, implementations, figures, animations, and HTML explanations are
   independent options. Implementation is optional. A diagram may need only a
   checked illustrative example.
-- Keep topic work in `topics/<topic-slug>/`. Use descriptive filenames. Add shared
-  helpers only after actual reuse appears. Leave unrelated blog work in its repository.
+- Keep topic work in `topics/<year>/<month>/<topic-slug>/`, using a four-digit year
+  and two-digit month, such as `topics/2026/10/attention/`. Date new topics by their
+  creation month; continue existing topics in their original folder. Use descriptive
+  filenames. Add shared helpers only after actual reuse appears. Leave unrelated
+  blog work in its repository.
 - Use uv and Black. Use standard logging for Python utilities. Introduce Pydantic
   when structured validation is needed, and tests when there is behavior to verify.
 

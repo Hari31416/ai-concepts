@@ -29,7 +29,7 @@ help:
 	@echo 'format      Format project Python files'
 	@echo 'hooks       Install Git hooks'
 	@echo 'pre-commit  Run hooks on all tracked files'
-	@echo 'Example: make preview FILE=topics/attention/animation.py SCENE=Attention'
+	@echo 'Example: make preview FILE=topics/2026/10/attention/animation.py SCENE=Attention'
 
 setup:
 	uv sync --locked
