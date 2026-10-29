@@ -52,6 +52,9 @@ Run render commands from the repository root so topic scenes can import `shared.
   missing information. A full video plan and clarification round are optional.
 - When writing or reviewing Manim code, read
   `.agents/skills/manimce-best-practices/SKILL.md` and relevant linked references.
+- For rendered visual checks, layout defects, or transition collisions, read
+  `.agents/skills/manim-visual-review/SKILL.md`. Use its frame extraction and
+  visual inspection loop before handing off changed animations.
 - Preserve these skills, their supporting files, and the root `skills-lock.json`.
   Keep lock metadata in sync when deliberately installing or updating skills.
   Prefer Manim Community Edition.

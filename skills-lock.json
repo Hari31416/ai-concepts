@@ -7,6 +7,12 @@
       "skillPath": "skills/manim-composer/SKILL.md",
       "computedHash": "6cd978db31ce962c847783a3c76c099185ed31cad6a37efae591e2a87c50b758"
     },
+    "manim-visual-review": {
+      "source": "./.agents/skills/manim-visual-review",
+      "sourceType": "local",
+      "skillPath": "SKILL.md",
+      "computedHash": "b33717b283bb740ae4dd08fa63f6642190b447f8953b7f1e34fda8afa138e158"
+    },
     "manimce-best-practices": {
       "source": "adithya-s-k/manim_skill",
       "sourceType": "github",
