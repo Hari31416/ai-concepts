@@ -179,12 +179,18 @@ class MemoryBottleneckScene(Scene):
         compute_group = VGroup(compute_panel, compute_label, compute_spec, core_grid)
 
         bus_line_top = Line(
-            LEFT * 2.3 + UP * 1.3, RIGHT * 2.3 + UP * 1.3, color=BORDER, stroke_width=2
+            LEFT * 2.4 + UP * 1.25,
+            RIGHT * 2.4 + UP * 1.25,
+            color=BORDER,
+            stroke_width=2,
         )
         bus_line_bot = Line(
-            LEFT * 2.3 + UP * 0.2, RIGHT * 2.3 + UP * 0.2, color=BORDER, stroke_width=2
+            LEFT * 2.4 + UP * 0.15,
+            RIGHT * 2.4 + UP * 0.15,
+            color=BORDER,
+            stroke_width=2,
         )
-        bus_label = text("Memory Bus (3.35 TB/s)", font_size=16, color=MUTED)
+        bus_label = text("Memory Bus (3.35 TB/s)", font_size=15, color=MUTED)
         bus_label.next_to(bus_line_top, UP, buff=0.1)
         bus_group = VGroup(bus_line_top, bus_line_bot, bus_label)
 
@@ -192,27 +198,27 @@ class MemoryBottleneckScene(Scene):
         self.wait(0.4)
 
         transfer_packet = RoundedRectangle(
-            width=2.4,
-            height=0.7,
-            corner_radius=0.1,
+            width=2.0,
+            height=0.55,
+            corner_radius=0.08,
             fill_color=ACCENT,
             fill_opacity=0.4,
             stroke_color=ACCENT,
             stroke_width=2,
-        ).move_to(LEFT * 2.6 + UP * 0.75)
-        packet_label = text("Load 140 GB", font_size=18, color=ACCENT, weight="BOLD")
+        ).move_to(LEFT * 1.35 + UP * 0.70)
+        packet_label = text("Load 140 GB", font_size=16, color=ACCENT, weight="BOLD")
         packet_label.move_to(transfer_packet)
         packet = VGroup(transfer_packet, packet_label)
 
         self.play(FadeIn(packet))
-        self.play(packet.animate.move_to(RIGHT * 2.6 + UP * 0.75), run_time=1.3)
+        self.play(packet.animate.move_to(RIGHT * 1.35 + UP * 0.70), run_time=1.3)
 
         token_emitted = RoundedRectangle(
-            width=2.2,
-            height=0.6,
-            corner_radius=0.1,
-            fill_color=ENTITY_A,
-            fill_opacity=0.3,
+            width=2.1,
+            height=0.55,
+            corner_radius=0.08,
+            fill_color=SURFACE,
+            fill_opacity=0.95,
             stroke_color=ENTITY_A,
             stroke_width=2,
         ).move_to(RIGHT * 4.2 + UP * 0.3)
@@ -225,21 +231,21 @@ class MemoryBottleneckScene(Scene):
         self.wait(0.4)
 
         status_box = panel(
-            width=11.2, height=1.3, fill_color=SURFACE, stroke_color=BORDER
+            width=11.2, height=1.05, fill_color=SURFACE, stroke_color=BORDER
         )
-        status_box.move_to(DOWN * 2.7)
+        status_box.move_to(DOWN * 2.6)
         insight_1 = text(
             "Autoregressive Bottleneck: Full 140 GB loaded for just 1 token!",
-            font_size=20,
+            font_size=17,
             color=TEXT,
         )
         insight_2 = text(
             "Arithmetic Intensity is low: Tensor Cores spend ~90% of time idle.",
-            font_size=18,
+            font_size=16,
             color=ERROR,
         )
         insight_group = (
-            VGroup(insight_1, insight_2).arrange(DOWN, buff=0.12).move_to(status_box)
+            VGroup(insight_1, insight_2).arrange(DOWN, buff=0.10).move_to(status_box)
         )
 
         self.play(FadeIn(status_box), Write(insight_group))
@@ -247,7 +253,7 @@ class MemoryBottleneckScene(Scene):
 
         realization = text(
             "Key Insight: Verifying K tokens in parallel takes nearly the SAME time!",
-            font_size=20,
+            font_size=17,
             color=SUCCESS,
             weight="BOLD",
         ).move_to(status_box)
@@ -268,30 +274,38 @@ class SpeculativeLoopScene(Scene):
 
         # Top Model Cards
         draft_box = panel(
-            width=4.4, height=1.6, fill_color=SURFACE, stroke_color=ENTITY_B
+            width=4.4, height=1.5, fill_color=SURFACE, stroke_color=ENTITY_B
         ).move_to(LEFT * 3.6 + UP * 2.0)
         draft_title = text(
-            "Draft Model Mq (Small)", font_size=19, color=ENTITY_B, weight="BOLD"
-        ).next_to(draft_box.get_top(), DOWN, buff=0.18)
+            "Draft Model Mq (Small)", font_size=18, color=ENTITY_B, weight="BOLD"
+        )
         draft_desc = text(
             "1B Params • ~2 ms / token\nSequentially guesses candidates",
-            font_size=15,
+            font_size=14,
             color=MUTED,
-        ).next_to(draft_title, DOWN, buff=0.10)
-        draft_card = VGroup(draft_box, draft_title, draft_desc)
+        )
+        draft_content = (
+            VGroup(draft_title, draft_desc).arrange(DOWN, buff=0.12).move_to(draft_box)
+        )
+        draft_card = VGroup(draft_box, draft_content)
 
         target_box = panel(
-            width=4.6, height=1.6, fill_color=SURFACE, stroke_color=ENTITY_A
+            width=4.6, height=1.5, fill_color=SURFACE, stroke_color=ENTITY_A
         ).move_to(RIGHT * 3.6 + UP * 2.0)
         target_title = text(
-            "Target Model Mp (Large)", font_size=19, color=ENTITY_A, weight="BOLD"
-        ).next_to(target_box.get_top(), DOWN, buff=0.18)
+            "Target Model Mp (Large)", font_size=18, color=ENTITY_A, weight="BOLD"
+        )
         target_desc = text(
             "70B Params • ~25 ms / pass\nEvaluates full batches in 1 pass",
-            font_size=15,
+            font_size=14,
             color=MUTED,
-        ).next_to(target_title, DOWN, buff=0.10)
-        target_card = VGroup(target_box, target_title, target_desc)
+        )
+        target_content = (
+            VGroup(target_title, target_desc)
+            .arrange(DOWN, buff=0.12)
+            .move_to(target_box)
+        )
+        target_card = VGroup(target_box, target_content)
 
         self.play(FadeIn(draft_card), FadeIn(target_card))
         self.wait(0.3)
@@ -427,8 +441,8 @@ class SpeculativeLoopScene(Scene):
         )
 
         batch_container = panel(
-            width=batch_table.get_width() + 0.6,
-            height=batch_table.get_height() + 0.45,
+            width=batch_table.width + 0.6,
+            height=batch_table.height + 0.45,
             fill_color=SURFACE,
             stroke_color=ENTITY_A,
         ).move_to(batch_table.get_center())
@@ -456,11 +470,11 @@ class SpeculativeLoopScene(Scene):
 
         # Callout banner: 70B loaded once to evaluate all 4 queries
         pass_banner = panel(
-            width=11.2, height=1.0, fill_color=SURFACE, stroke_color=ENTITY_A
-        ).move_to(DOWN * 3.0)
+            width=11.2, height=0.85, fill_color=SURFACE, stroke_color=ENTITY_A
+        ).move_to(DOWN * 2.6)
         pass_text = text(
             "1 Forward Pass (28 ms): 70B weights loaded ONCE to evaluate all 4 queries in parallel!",
-            font_size=18,
+            font_size=16,
             color=ENTITY_A,
             weight="BOLD",
         ).move_to(pass_banner)
@@ -506,7 +520,7 @@ class SpeculativeLoopScene(Scene):
 
         final_row = (
             VGroup(final_the, final_quick, fg1, fg2, fg3, fg4)
-            .arrange(RIGHT, buff=0.15)
+            .arrange(RIGHT, buff=0.20)
             .move_to(DOWN * 0.4)
         )
         row_lbl = text("Draft Candidate Tokens:", font_size=15, color=MUTED).next_to(
@@ -519,34 +533,34 @@ class SpeculativeLoopScene(Scene):
             "brown (94%)",
             color=TEXT,
             border_color=SUCCESS,
-            width=1.45,
-            height=0.45,
-            font_size=13,
-        ).next_to(fg1, UP, buff=0.7)
+            width=1.35,
+            height=0.42,
+            font_size=12,
+        ).next_to(fg1, UP, buff=0.65)
         t2 = make_token_box(
             "fox (91%)",
             color=TEXT,
             border_color=SUCCESS,
-            width=1.45,
-            height=0.45,
-            font_size=13,
-        ).next_to(fg2, UP, buff=0.7)
+            width=1.35,
+            height=0.42,
+            font_size=12,
+        ).next_to(fg2, UP, buff=0.65)
         t3 = make_token_box(
             "jumps (86%)",
             color=TEXT,
             border_color=SUCCESS,
-            width=1.45,
-            height=0.45,
-            font_size=13,
-        ).next_to(fg3, UP, buff=0.7)
+            width=1.35,
+            height=0.42,
+            font_size=12,
+        ).next_to(fg3, UP, buff=0.65)
         t4 = make_token_box(
             "over (82%)",
             color=TEXT,
             border_color=ERROR,
-            width=1.45,
-            height=0.45,
-            font_size=13,
-        ).next_to(fg4, UP, buff=0.7)
+            width=1.35,
+            height=0.42,
+            font_size=12,
+        ).next_to(fg4, UP, buff=0.65)
         t_outputs = VGroup(t1, t2, t3, t4)
         t_label = (
             text(
@@ -616,11 +630,11 @@ class SpeculativeLoopScene(Scene):
         self.wait(0.6)
 
         summary_panel = panel(
-            width=11.5, height=1.0, fill_color=SURFACE, stroke_color=SUCCESS
-        ).move_to(DOWN * 3.0)
+            width=11.2, height=0.85, fill_color=SURFACE, stroke_color=SUCCESS
+        ).move_to(DOWN * 2.6)
         summary_msg = text(
             'Outcome: 4 verified tokens ["brown", "fox", "jumps", "over"] emitted from 1 target step!',
-            font_size=20,
+            font_size=16,
             color=SUCCESS,
             weight="BOLD",
         ).move_to(summary_panel)
@@ -718,46 +732,48 @@ class RejectionSamplingScene(Scene):
         self.wait(0.6)
 
         legend_box = panel(
-            width=4.8, height=3.2, fill_color=SURFACE, stroke_color=BORDER
-        )
-        legend_box.move_to(RIGHT * 4.4 + DOWN * 0.2)
+            width=3.6, height=2.3, fill_color=SURFACE, stroke_color=BORDER
+        ).move_to(RIGHT * 4.4 + DOWN * 0.2)
 
         leg_title = text(
-            "Probability Breakdown", font_size=19, color=TEXT, weight="BOLD"
+            "Probability Breakdown", font_size=17, color=TEXT, weight="BOLD"
         )
-        leg_title.next_to(legend_box.get_top(), DOWN, buff=0.2)
 
         dot1 = Rectangle(
-            width=0.35,
-            height=0.22,
+            width=0.32,
+            height=0.20,
             fill_color=SUCCESS,
             fill_opacity=0.8,
             stroke_width=0,
         )
-        desc1 = text("Accepted: min(p, q)", font_size=15, color=SUCCESS)
-        item1 = VGroup(dot1, desc1).arrange(RIGHT, buff=0.15)
+        desc1 = text("Accepted: min(p, q)", font_size=14, color=SUCCESS)
+        item1 = VGroup(dot1, desc1).arrange(RIGHT, buff=0.12)
 
         dot2 = Rectangle(
-            width=0.35,
-            height=0.22,
+            width=0.32,
+            height=0.20,
             fill_color=ENTITY_A,
             fill_opacity=0.8,
             stroke_width=0,
         )
-        desc2 = text("Resampled: max(0, p - q)", font_size=15, color=ENTITY_A)
-        item2 = VGroup(dot2, desc2).arrange(RIGHT, buff=0.15)
+        desc2 = text("Resampled: max(0, p - q)", font_size=14, color=ENTITY_A)
+        item2 = VGroup(dot2, desc2).arrange(RIGHT, buff=0.12)
 
         dot3 = Rectangle(
-            width=0.35, height=0.22, fill_color=ERROR, fill_opacity=0.5, stroke_width=0
+            width=0.32, height=0.20, fill_color=ERROR, fill_opacity=0.5, stroke_width=0
         )
-        desc3 = text("Rejected Draft: max(0, q - p)", font_size=15, color=ERROR)
-        item3 = VGroup(dot3, desc3).arrange(RIGHT, buff=0.15)
+        desc3 = text("Rejected Draft: max(0, q - p)", font_size=14, color=ERROR)
+        item3 = VGroup(dot3, desc3).arrange(RIGHT, buff=0.12)
 
         legend_items = VGroup(item1, item2, item3).arrange(
-            DOWN, aligned_edge=LEFT, buff=0.25
+            DOWN, aligned_edge=LEFT, buff=0.16
         )
-        legend_items.next_to(leg_title, DOWN, buff=0.3)
-        legend_group = VGroup(legend_box, leg_title, legend_items)
+        legend_content = (
+            VGroup(leg_title, legend_items)
+            .arrange(DOWN, aligned_edge=LEFT, buff=0.20)
+            .move_to(legend_box)
+        )
+        legend_group = VGroup(legend_box, legend_content)
 
         self.play(FadeIn(legend_group))
         self.wait(1.0)
@@ -770,12 +786,12 @@ class RejectionSamplingScene(Scene):
         self.wait(1.0)
 
         guarantee_panel = panel(
-            width=11.5, height=1.0, fill_color=SURFACE, stroke_color=SUCCESS
+            width=11.2, height=0.85, fill_color=SURFACE, stroke_color=SUCCESS
         )
-        guarantee_panel.move_to(DOWN * 3.1)
+        guarantee_panel.move_to(DOWN * 2.6)
         guarantee_text = text(
             "Zero approximation: Speculative Sampling is mathematically lossless!",
-            font_size=21,
+            font_size=17,
             color=SUCCESS,
             weight="BOLD",
         ).move_to(guarantee_panel)
@@ -818,6 +834,7 @@ class SpeedupComparisonScene(Scene):
             blocks_ar.add(VGroup(b, t))
         blocks_ar.arrange(RIGHT, buff=0.12)
         blocks_ar.next_to(row1_label, DOWN, buff=0.2).align_to(LEFT * 5.8, LEFT)
+        row1_label.align_to(blocks_ar, LEFT)
 
         ar_brace = Brace(blocks_ar, DOWN, color=MUTED)
         ar_time = text(
@@ -867,6 +884,7 @@ class SpeedupComparisonScene(Scene):
 
         spec_blocks = VGroup(draft_blocks, verify_block).arrange(RIGHT, buff=0.12)
         spec_blocks.next_to(row2_label, DOWN, buff=0.2).align_to(LEFT * 5.8, LEFT)
+        row2_label.align_to(spec_blocks, LEFT)
 
         spec_brace = Brace(spec_blocks, DOWN, color=SUCCESS)
         spec_time = text(
@@ -877,21 +895,21 @@ class SpeedupComparisonScene(Scene):
         self.wait(1.0)
 
         callout_box = panel(
-            width=3.6, height=3.6, fill_color=SURFACE, stroke_color=ACCENT
+            width=3.2, height=2.5, fill_color=SURFACE, stroke_color=ACCENT
         )
         callout_box.move_to(RIGHT * 4.6 + DOWN * 0.2)
 
-        metric_num = text("2.8×", font_size=52, color=ACCENT, weight="BOLD")
-        metric_lbl = text("Latency Speedup", font_size=19, color=TEXT, weight="BOLD")
+        metric_num = text("2.8×", font_size=46, color=ACCENT, weight="BOLD")
+        metric_lbl = text("Latency Speedup", font_size=18, color=TEXT, weight="BOLD")
         metric_sub = text(
             "Same Token Output\nIdentical Perplexity\nZero Fine-Tuning",
-            font_size=15,
+            font_size=14,
             color=MUTED,
         )
 
         metric_group = (
             VGroup(metric_num, metric_lbl, metric_sub)
-            .arrange(DOWN, buff=0.18)
+            .arrange(DOWN, buff=0.15)
             .move_to(callout_box)
         )
         self.play(FadeIn(callout_box), FadeIn(metric_group))
@@ -967,12 +985,12 @@ class SpeculativeDecoding(Scene):
         compute_group = VGroup(compute_panel, compute_lbl, compute_desc, core_grid)
 
         bus_line_top = Line(
-            LEFT * 2.3 + UP * 1.2, RIGHT * 2.3 + UP * 1.2, color=BORDER, stroke_width=2
+            LEFT * 2.4 + UP * 1.2, RIGHT * 2.4 + UP * 1.2, color=BORDER, stroke_width=2
         )
         bus_line_bot = Line(
-            LEFT * 2.3 + UP * 0.1, RIGHT * 2.3 + UP * 0.1, color=BORDER, stroke_width=2
+            LEFT * 2.4 + UP * 0.1, RIGHT * 2.4 + UP * 0.1, color=BORDER, stroke_width=2
         )
-        bus_lbl = text("Memory Bus (3.35 TB/s)", font_size=16, color=MUTED).next_to(
+        bus_lbl = text("Memory Bus (3.35 TB/s)", font_size=15, color=MUTED).next_to(
             bus_line_top, UP, buff=0.1
         )
         bus_group = VGroup(bus_line_top, bus_line_bot, bus_lbl)
@@ -980,28 +998,28 @@ class SpeculativeDecoding(Scene):
         self.play(FadeIn(hbm_group), FadeIn(compute_group), FadeIn(bus_group))
 
         transfer_packet = RoundedRectangle(
-            width=2.4,
-            height=0.7,
-            corner_radius=0.1,
+            width=2.0,
+            height=0.55,
+            corner_radius=0.08,
             fill_color=ACCENT,
             fill_opacity=0.4,
             stroke_color=ACCENT,
             stroke_width=2,
-        ).move_to(LEFT * 2.6 + UP * 0.65)
+        ).move_to(LEFT * 1.35 + UP * 0.65)
         packet_lbl = text(
-            "Load 140 GB", font_size=18, color=ACCENT, weight="BOLD"
+            "Load 140 GB", font_size=16, color=ACCENT, weight="BOLD"
         ).move_to(transfer_packet)
         packet = VGroup(transfer_packet, packet_lbl)
 
         self.play(FadeIn(packet))
-        self.play(packet.animate.move_to(RIGHT * 2.6 + UP * 0.65), run_time=1.2)
+        self.play(packet.animate.move_to(RIGHT * 1.35 + UP * 0.65), run_time=1.2)
 
         token_emitted = RoundedRectangle(
-            width=2.2,
-            height=0.6,
-            corner_radius=0.1,
-            fill_color=ENTITY_A,
-            fill_opacity=0.3,
+            width=2.1,
+            height=0.55,
+            corner_radius=0.08,
+            fill_color=SURFACE,
+            fill_opacity=0.95,
             stroke_color=ENTITY_A,
             stroke_width=2,
         ).move_to(RIGHT * 4.2 + UP * 0.2)
@@ -1013,11 +1031,11 @@ class SpeculativeDecoding(Scene):
         self.play(FadeOut(packet), FadeIn(token_group))
 
         p1_banner = panel(
-            width=11.5, height=1.1, fill_color=SURFACE, stroke_color=SUCCESS
-        ).move_to(DOWN * 2.8)
+            width=11.2, height=0.85, fill_color=SURFACE, stroke_color=SUCCESS
+        ).move_to(DOWN * 2.6)
         p1_msg = text(
             "Insight: Tensor cores are starved! Parallel verification of K tokens takes almost the same time.",
-            font_size=19,
+            font_size=16,
             color=SUCCESS,
             weight="BOLD",
         ).move_to(p1_banner)
@@ -1165,8 +1183,8 @@ class SpeculativeDecoding(Scene):
         )
 
         batch_container = panel(
-            width=batch_table.get_width() + 0.5,
-            height=batch_table.get_height() + 0.4,
+            width=batch_table.width + 0.5,
+            height=batch_table.height + 0.4,
             fill_color=SURFACE,
             stroke_color=ENTITY_A,
         ).move_to(batch_table.get_center())
@@ -1226,7 +1244,7 @@ class SpeculativeDecoding(Scene):
 
         final_row = (
             VGroup(final_the, final_quick, fg1, fg2, fg3, fg4)
-            .arrange(RIGHT, buff=0.15)
+            .arrange(RIGHT, buff=0.20)
             .move_to(DOWN * 0.4)
         )
         self.play(FadeIn(final_row))
@@ -1235,34 +1253,34 @@ class SpeculativeDecoding(Scene):
             "brown (94%)",
             color=TEXT,
             border_color=SUCCESS,
-            width=1.45,
-            height=0.45,
-            font_size=13,
-        ).next_to(fg1, UP, buff=0.7)
+            width=1.35,
+            height=0.42,
+            font_size=12,
+        ).next_to(fg1, UP, buff=0.65)
         t2 = make_token_box(
             "fox (91%)",
             color=TEXT,
             border_color=SUCCESS,
-            width=1.45,
-            height=0.45,
-            font_size=13,
-        ).next_to(fg2, UP, buff=0.7)
+            width=1.35,
+            height=0.42,
+            font_size=12,
+        ).next_to(fg2, UP, buff=0.65)
         t3 = make_token_box(
             "jumps (86%)",
             color=TEXT,
             border_color=SUCCESS,
-            width=1.45,
-            height=0.45,
-            font_size=13,
-        ).next_to(fg3, UP, buff=0.7)
+            width=1.35,
+            height=0.42,
+            font_size=12,
+        ).next_to(fg3, UP, buff=0.65)
         t4 = make_token_box(
             "over (82%)",
             color=TEXT,
             border_color=ERROR,
-            width=1.45,
-            height=0.45,
-            font_size=13,
-        ).next_to(fg4, UP, buff=0.7)
+            width=1.35,
+            height=0.42,
+            font_size=12,
+        ).next_to(fg4, UP, buff=0.65)
         t_outputs = VGroup(t1, t2, t3, t4)
         t_label = (
             text(
@@ -1322,11 +1340,11 @@ class SpeculativeDecoding(Scene):
         )
 
         p2_banner = panel(
-            width=11.5, height=1.0, fill_color=SURFACE, stroke_color=SUCCESS
-        ).move_to(DOWN * 3.0)
+            width=11.2, height=0.85, fill_color=SURFACE, stroke_color=SUCCESS
+        ).move_to(DOWN * 2.6)
         p2_msg = text(
             'Outcome: 4 verified tokens ["brown", "fox", "jumps", "over"] emitted from 1 target step!',
-            font_size=20,
+            font_size=16,
             color=SUCCESS,
             weight="BOLD",
         ).move_to(p2_banner)
@@ -1436,44 +1454,45 @@ class SpeculativeDecoding(Scene):
         self.play(FadeIn(bar_groups), FadeIn(labels_group))
 
         legend_box = panel(
-            width=4.8, height=3.0, fill_color=SURFACE, stroke_color=BORDER
+            width=3.6, height=2.3, fill_color=SURFACE, stroke_color=BORDER
         ).move_to(RIGHT * 4.4 + DOWN * 0.2)
         leg_title = text(
-            "Probability Breakdown", font_size=19, color=TEXT, weight="BOLD"
-        ).next_to(legend_box.get_top(), DOWN, buff=0.18)
+            "Probability Breakdown", font_size=17, color=TEXT, weight="BOLD"
+        )
 
         d1 = Rectangle(
-            width=0.35,
-            height=0.22,
+            width=0.32,
+            height=0.20,
             fill_color=SUCCESS,
             fill_opacity=0.8,
             stroke_width=0,
         )
-        t1 = text("Accepted: min(p, q)", font_size=15, color=SUCCESS)
-        i1 = VGroup(d1, t1).arrange(RIGHT, buff=0.15)
+        t1 = text("Accepted: min(p, q)", font_size=14, color=SUCCESS)
+        i1 = VGroup(d1, t1).arrange(RIGHT, buff=0.12)
 
         d2 = Rectangle(
-            width=0.35,
-            height=0.22,
+            width=0.32,
+            height=0.20,
             fill_color=ENTITY_A,
             fill_opacity=0.8,
             stroke_width=0,
         )
-        t2 = text("Resampled: max(0, p - q)", font_size=15, color=ENTITY_A)
-        i2 = VGroup(d2, t2).arrange(RIGHT, buff=0.15)
+        t2 = text("Resampled: max(0, p - q)", font_size=14, color=ENTITY_A)
+        i2 = VGroup(d2, t2).arrange(RIGHT, buff=0.12)
 
         d3 = Rectangle(
-            width=0.35, height=0.22, fill_color=ERROR, fill_opacity=0.5, stroke_width=0
+            width=0.32, height=0.20, fill_color=ERROR, fill_opacity=0.5, stroke_width=0
         )
-        t3 = text("Rejected: max(0, q - p)", font_size=15, color=ERROR)
-        i3 = VGroup(d3, t3).arrange(RIGHT, buff=0.15)
+        t3 = text("Rejected: max(0, q - p)", font_size=14, color=ERROR)
+        i3 = VGroup(d3, t3).arrange(RIGHT, buff=0.12)
 
-        legend_items = (
-            VGroup(i1, i2, i3)
-            .arrange(DOWN, aligned_edge=LEFT, buff=0.22)
-            .next_to(leg_title, DOWN, buff=0.25)
+        legend_items = VGroup(i1, i2, i3).arrange(DOWN, aligned_edge=LEFT, buff=0.16)
+        legend_content = (
+            VGroup(leg_title, legend_items)
+            .arrange(DOWN, aligned_edge=LEFT, buff=0.20)
+            .move_to(legend_box)
         )
-        legend_grp = VGroup(legend_box, leg_title, legend_items)
+        legend_grp = VGroup(legend_box, legend_content)
         self.play(FadeIn(legend_grp))
 
         bracket_a = Brace(bar_groups[0], LEFT, color=ENTITY_A)
@@ -1483,11 +1502,11 @@ class SpeculativeDecoding(Scene):
         self.play(Create(bracket_a), FadeIn(label_a))
 
         p3_banner = panel(
-            width=11.5, height=1.0, fill_color=SURFACE, stroke_color=SUCCESS
-        ).move_to(DOWN * 3.1)
+            width=11.2, height=0.85, fill_color=SURFACE, stroke_color=SUCCESS
+        ).move_to(DOWN * 2.6)
         p3_msg = text(
             "Lossless Guarantee: Output distribution matches the target model exactly.",
-            font_size=21,
+            font_size=17,
             color=SUCCESS,
             weight="BOLD",
         ).move_to(p3_banner)
@@ -1536,6 +1555,7 @@ class SpeculativeDecoding(Scene):
         blocks_ar.arrange(RIGHT, buff=0.12).next_to(row1_lbl, DOWN, buff=0.2).align_to(
             LEFT * 5.8, LEFT
         )
+        row1_lbl.align_to(blocks_ar, LEFT)
 
         ar_brace = Brace(blocks_ar, DOWN, color=MUTED)
         ar_time = text(
@@ -1582,6 +1602,7 @@ class SpeculativeDecoding(Scene):
 
         spec_blocks = VGroup(draft_blocks, verify_block).arrange(RIGHT, buff=0.12)
         spec_blocks.next_to(row2_lbl, DOWN, buff=0.2).align_to(LEFT * 5.8, LEFT)
+        row2_lbl.align_to(spec_blocks, LEFT)
 
         spec_brace = Brace(spec_blocks, DOWN, color=SUCCESS)
         spec_time = text(
@@ -1592,18 +1613,18 @@ class SpeculativeDecoding(Scene):
         )
 
         callout_box = panel(
-            width=3.6, height=3.6, fill_color=SURFACE, stroke_color=ACCENT
+            width=3.2, height=2.5, fill_color=SURFACE, stroke_color=ACCENT
         ).move_to(RIGHT * 4.6 + DOWN * 0.2)
-        metric_num = text("2.8×", font_size=52, color=ACCENT, weight="BOLD")
-        metric_lbl = text("Latency Speedup", font_size=19, color=TEXT, weight="BOLD")
+        metric_num = text("2.8×", font_size=46, color=ACCENT, weight="BOLD")
+        metric_lbl = text("Latency Speedup", font_size=18, color=TEXT, weight="BOLD")
         metric_sub = text(
             "Same Token Output\nIdentical Perplexity\nZero Fine-Tuning",
-            font_size=15,
+            font_size=14,
             color=MUTED,
         )
         metric_group = (
             VGroup(metric_num, metric_lbl, metric_sub)
-            .arrange(DOWN, buff=0.18)
+            .arrange(DOWN, buff=0.15)
             .move_to(callout_box)
         )
 
