@@ -28,7 +28,7 @@ Put the beats in `scenes.md` next to the visuals, then in code. Rules:
 - Open a Short with a hook in the first two seconds: a question or a number.
 - One idea per beat. Order: **show caption -> animate the mechanism -> hold**, so
   viewers never read and track motion at once.
-- Cite sources for numbers on screen. Mark illustrative data as illustrative.
+- Keep citations in `publish.md` and `notes.md`; do not include `Source:` text on screen in Shorts unless explicitly requested. Mark illustrative data as illustrative.
 
 ```python
 from shared.captions import CaptionTrack

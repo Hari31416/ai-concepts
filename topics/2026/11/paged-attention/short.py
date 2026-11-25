@@ -369,12 +369,10 @@ def payoff(scene: Scene, caps: CaptionTrack, head: VGroup) -> None:
     ).arrange(DOWN, buff=0.2)
     old.move_to([X0, 4.4, 0])
     new.move_to([X0, 1.2, 0])
-    source = text("Source: vLLM paper (Kwon et al., 2023)", font_size=24, color=MUTED)
-    source.move_to([X0, -1.3, 0])
     scene.play(FadeIn(old, shift=UP * 0.2))
     scene.wait(0.6)
     play_sfx(scene, "chime")
-    scene.play(FadeIn(new, shift=UP * 0.2), FadeIn(source))
+    scene.play(FadeIn(new, shift=UP * 0.2))
     caps.hold()
 
     caps.show("Same GPU, more requests served at once.")
