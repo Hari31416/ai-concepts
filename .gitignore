@@ -16,6 +16,7 @@ logs/
 
 # Final topic renders; keep authored image assets in Git
 topics/**/*.mp4
+topics/**/*.srt
 
 # Generated audio assets (rebuild with python -m shared.audio)
 shared/audio/*.wav
