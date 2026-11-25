@@ -48,3 +48,14 @@ def test_title_creation() -> None:
     t = theme.title("Overview")
     assert isinstance(t, Text)
     assert t.text == "Overview"
+
+
+def test_shorts_safe_area_leaves_room_for_captions() -> None:
+    assert theme.SHORTS_FRAME_WIDTH / theme.SHORTS_FRAME_HEIGHT == 9 / 16
+    half_height = theme.SHORTS_FRAME_HEIGHT / 2
+    # Captions sit above YouTube's bottom overlay and below the content.
+    assert theme.SHORTS_CAPTION_Y > -half_height + theme.SHORTS_SAFE_BOTTOM
+    assert theme.SHORTS_CAPTION_Y < theme.SHORTS_CONTENT_BOTTOM
+    # Content stays clear of the right-hand buttons.
+    right_edge = theme.SHORTS_CONTENT_CENTER_X + theme.SHORTS_CONTENT_WIDTH / 2
+    assert right_edge <= theme.SHORTS_FRAME_WIDTH / 2 - theme.SHORTS_SAFE_RIGHT + 0.5

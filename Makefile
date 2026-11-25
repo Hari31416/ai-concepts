@@ -7,8 +7,19 @@ IMAGES_DIR ?= $(OUTPUT_DIR)/images
 MEDIA ?= $(OUTPUT_DIR)/media
 VERBOSE ?= 0
 OPEN ?= 0
+FORMAT ?= landscape
+MUSIC ?=
 MANIM = uv run --locked python -m manim
 FLAGS = --media_dir "$(MEDIA)"
+PREVIEW_RES =
+FINAL_RES =
+ifeq ($(FORMAT),shorts)
+FLAGS += --config_file manim_shorts.cfg
+PREVIEW_RES = -r 480,854
+FINAL_RES = -r 1080,1920
+else ifneq ($(FORMAT),landscape)
+$(error FORMAT must be landscape or shorts)
+endif
 ifeq ($(VERBOSE),1)
 FLAGS += --verbosity DEBUG
 endif
@@ -16,18 +27,22 @@ ifeq ($(OPEN),1)
 FLAGS += --preview
 endif
 
-.PHONY: help setup hooks pre-commit check test typecheck format preview render frame list clean require-file require-scene
+.PHONY: help setup hooks pre-commit check test typecheck format preview render mix audio-assets frame list clean require-file require-scene
 
 help:
 	@echo 'setup       Install locked dependencies and Git hooks'
 	@echo 'preview     Render 480p video; FILE and SCENE required'
 	@echo 'render      Save VIDEO_DIR/SCENE.mp4; QUALITY=h by default'
+	@echo 'mix         Mix the music bed under VIDEO_DIR/SCENE.mp4 into SCENE_final.mp4'
+	@echo 'audio-assets Generate the SFX and music .wav files'
 	@echo 'frame       Save the last frame as IMAGES_DIR/SCENE.png'
 	@echo 'list        List scene classes in FILE'
 	@echo 'clean       Remove only this scene partial movie caches; FILE and SCENE required'
 	@echo 'Options: OUTPUT_DIR defaults to the source folder; VIDEO_DIR defaults to OUTPUT_DIR/video'
 	@echo '         IMAGES_DIR defaults to OUTPUT_DIR/images; MEDIA overrides the cache folder'
 	@echo '         VERBOSE=1 enables debug logs; OPEN=1 opens rendered output'
+	@echo '         FORMAT=landscape (default) or shorts (1080x1920 vertical 9:16)'
+	@echo '         MUSIC=path/to/track.wav replaces the generated music bed in mix'
 	@echo '         QUALITY=l/m/h/p/k selects 480p/720p/1080p/1440p/2160p'
 	@echo 'check       Run pre-commit, type checks, and tests'
 	@echo 'test        Run pytest test suite'
@@ -68,15 +83,21 @@ list: require-file
 	@uv run --locked python -c 'import sys; from pathlib import Path; from manim.utils.module_ops import get_module, get_scene_classes_from_module; print("\n".join(scene.__name__ for scene in get_scene_classes_from_module(get_module(Path(sys.argv[1])))))' "$(FILE)"
 
 preview: require-scene
-	$(MANIM) -ql $(FLAGS) "$(FILE)" "$(SCENE)"
+	$(MANIM) -ql $(PREVIEW_RES) $(FLAGS) "$(FILE)" "$(SCENE)"
 
 render: require-scene
 	@mkdir -p "$(VIDEO_DIR)"
-	$(MANIM) -q$(QUALITY) $(FLAGS) -o "$$(cd "$(VIDEO_DIR)" && pwd)/$(SCENE).mp4" "$(FILE)" "$(SCENE)"
+	$(MANIM) -q$(QUALITY) $(FINAL_RES) $(FLAGS) -o "$$(cd "$(VIDEO_DIR)" && pwd)/$(SCENE).mp4" "$(FILE)" "$(SCENE)"
+
+audio-assets:
+	uv run --locked python -m shared.audio
+
+mix: require-scene
+	uv run --locked python -m scripts.mix_audio "$(VIDEO_DIR)/$(SCENE).mp4" --output "$(VIDEO_DIR)/$(SCENE)_final.mp4" $(if $(MUSIC),--music "$(MUSIC)")
 
 frame: require-scene
 	@mkdir -p "$(IMAGES_DIR)"
-	$(MANIM) -q$(QUALITY) -s $(FLAGS) -o "$$(cd "$(IMAGES_DIR)" && pwd)/$(SCENE).png" "$(FILE)" "$(SCENE)"
+	$(MANIM) -q$(QUALITY) -s $(FINAL_RES) $(FLAGS) -o "$$(cd "$(IMAGES_DIR)" && pwd)/$(SCENE).png" "$(FILE)" "$(SCENE)"
 
 clean: require-scene
 	uv run --locked python scripts/clean_animation.py "$(FILE)" "$(SCENE)" --media "$(MEDIA)"

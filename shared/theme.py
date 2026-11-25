@@ -56,6 +56,25 @@ TRANSITION_TIME = 0.6
 STEP_TIME = 1.0
 READ_PAUSE = 1.5
 
+# YouTube Shorts (9:16). The frame is 9 x 16 scene units (see manim_shorts.cfg).
+# YouTube's interface covers roughly the bottom 20% (title, channel, progress bar)
+# and the right 12% (buttons), so keep captions and key diagrams inside the safe
+# area below. Fonts are larger because phones show the video small.
+SHORTS_FRAME_WIDTH = 9.0
+SHORTS_FRAME_HEIGHT = 16.0
+SHORTS_SAFE_RIGHT = 1.1  # units reserved on the right edge
+SHORTS_SAFE_BOTTOM = 3.2  # units reserved at the bottom edge (~20%)
+SHORTS_SAFE_TOP = 0.8  # units reserved at the top edge
+SHORTS_CONTENT_CENTER_X = -SHORTS_SAFE_RIGHT / 2 + 0.2
+SHORTS_CONTENT_WIDTH = SHORTS_FRAME_WIDTH - SHORTS_SAFE_RIGHT - 2 * 0.4
+SHORTS_CONTENT_TOP = SHORTS_FRAME_HEIGHT / 2 - SHORTS_SAFE_TOP
+SHORTS_CONTENT_BOTTOM = -SHORTS_FRAME_HEIGHT / 2 + SHORTS_SAFE_BOTTOM + 1.7
+SHORTS_CAPTION_Y = -SHORTS_FRAME_HEIGHT / 2 + SHORTS_SAFE_BOTTOM + 0.6
+SHORTS_TITLE_SIZE = 52
+SHORTS_BODY_SIZE = 36
+SHORTS_LABEL_SIZE = 30
+SHORTS_CAPTION_SIZE = 32
+
 
 def apply_theme(scene: Scene) -> None:
     """Set the background without changing global text or animation defaults."""

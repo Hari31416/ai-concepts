@@ -16,3 +16,8 @@ logs/
 
 # Final topic renders; keep authored image assets in Git
 topics/**/*.mp4
+
+# Generated audio assets (rebuild with python -m shared.audio)
+shared/audio/*.wav
+# Manim sidecar audio next to final renders
+topics/**/video/*.wav
