@@ -1,0 +1,59 @@
+1
+00:00:01,000 --> 00:00:04,533
+Every request reserves memory
+for its maximum length.
+
+2
+00:00:04,533 --> 00:00:08,050
+Only a few slots hold real
+tokens. The rest sit idle.
+
+3
+00:00:08,050 --> 00:00:12,567
+A new request is rejected,
+even though memory sits idle.
+
+4
+00:00:12,567 --> 00:00:15,583
+PagedAttention borrows paging
+from operating systems.
+
+5
+00:00:15,583 --> 00:00:18,767
+Split the sequence into small
+fixed-size blocks.
+
+6
+00:00:18,767 --> 00:00:21,500
+GPU memory is a pool of
+same-size blocks.
+
+7
+00:00:21,500 --> 00:00:28,950
+A block table maps each
+logical block to any free one.
+
+8
+00:00:28,950 --> 00:00:32,417
+Blocks can sit anywhere. No
+contiguous space needed.
+
+9
+00:00:32,417 --> 00:00:35,067
+New token? Write it into the
+last block.
+
+10
+00:00:35,067 --> 00:00:39,267
+Block full? Claim a free
+block, add a table row.
+
+11
+00:00:39,267 --> 00:00:42,967
+Result: waste drops from
+60-80% to under 4%.
+
+12
+00:00:42,967 --> 00:00:46,367
+Same GPU, more requests served
+at once.
