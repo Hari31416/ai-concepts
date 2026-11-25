@@ -55,6 +55,8 @@ Run render commands from the repository root so topic scenes can import `shared.
 - For rendered visual checks, layout defects, or transition collisions, read
   `.agents/skills/manim-visual-review/SKILL.md`. Use its frame extraction and
   visual inspection loop before handing off changed animations.
+- For YouTube output (captions, `.srt`, sound effects, music, Shorts layout, upload
+  notes), read `.agents/skills/youtube-publish/SKILL.md`.
 - Preserve these skills, their supporting files, and the root `skills-lock.json`.
   Keep lock metadata in sync when deliberately installing or updating skills.
   Prefer Manim Community Edition.
