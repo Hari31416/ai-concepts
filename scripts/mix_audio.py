@@ -16,10 +16,14 @@ from shared.audio import MUSIC_NAME, asset_path
 
 # The bed peaks at -3 dBFS; at -13 dB it plays near -26 LUFS, about 10 dB under the
 # effects (which peak near -7 dBFS after their -4 dB gain).
-MUSIC_GAIN_DB = -13.0
+MUSIC_GAIN_DB = -14.0
 FADE_IN = 1.5
 FADE_OUT = 2.5
 PEAK_LIMIT = 0.89  # -1 dBFS ceiling
+DUCK_THRESHOLD = 0.1  # linear, about -20 dBFS
+DUCK_RATIO = 2.5
+DUCK_ATTACK_MS = 15
+DUCK_RELEASE_MS = 400
 
 
 def build_filter(*, has_audio: bool, duration: float, music_gain_db: float) -> str:
@@ -32,10 +36,14 @@ def build_filter(*, has_audio: bool, duration: float, music_gain_db: float) -> s
     )
     if not has_audio:
         return f"{music};[m]alimiter=limit={PEAK_LIMIT}:level=0[a]"
+    # Effects go to both the mix and a sidechain: the bed dips a few dB under each
+    # effect so it stays clear, then swells back (about 5 dB at the effects' peaks).
     return (
         f"{music};[0:a]aformat=channel_layouts=stereo,"
-        f"apad=whole_dur={duration:.3f}[s];"
-        f"[s][m]amix=inputs=2:duration=first:normalize=0,"
+        f"apad=whole_dur={duration:.3f},asplit=2[s][k];"
+        f"[m][k]sidechaincompress=threshold={DUCK_THRESHOLD}:ratio={DUCK_RATIO}:"
+        f"attack={DUCK_ATTACK_MS}:release={DUCK_RELEASE_MS}[d];"
+        f"[s][d]amix=inputs=2:duration=first:normalize=0,"
         f"alimiter=limit={PEAK_LIMIT}:level=0[a]"
     )
 

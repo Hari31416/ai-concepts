@@ -108,21 +108,32 @@ above the `SHORTS_*_SIZE` values. Reduce content before shrinking text.
 
 ## 5. Sound effects and music
 
-- Effects live in `shared/audio/` (`pop`, `tick`, `whoosh`, `deny`, `chime`),
-  synthesized by `shared/audio/synth.py` and generated on first use. Play one with
-  `play_sfx(self, "tick")` at the moment of the event. Meanings: `tick` = a value is
-  written, `pop` = something is allocated, `whoosh` = scene change, `deny` =
-  rejection, `chime` = the payoff. Skip a sound that marks no event.
-- Add a new effect by writing a generator in `synth.py`, adding it to `GENERATORS`
-  and `SFX_NAMES`, and adding a row to `shared/audio/LICENSES.md`.
-- The music bed is `music_bed` (a 32 s looping ambient pad, also synthesized).
-  `make mix` loops it under the video. To use another track, pass `MUSIC=path`, and
+- Effects live in `shared/audio/`, synthesized in stereo by `shared/audio/synth.py`
+  and regenerated whenever `synth.py` changes. Play one with
+  `play_sfx(self, "tick")` at the moment of the event; `delay=` offsets it in seconds
+  so one animation can carry a sequence. Choose sounds by mechanism, not decoration:
+  - `blip_0`-`blip_3`: light plucked notes for the small or cheap model (rising,
+    panned left to right like tokens on screen);
+  - `ping_0`-`ping_3`: bells for a verified or accepted item, rising in step;
+  - `thump`: a heavy hit for the big model or a big memory read;
+  - `stream`: fast clicks for data crossing a bus; `riser`: build-up before a big
+    step (follow with `thump` at `delay=0.85`);
+  - `tick` = a small value written, `pop` = something allocated, `whoosh` = scene
+    change (sweeps left to right), `deny` = rejection, `chime` = the payoff.
+  Skip a sound that marks no event, and keep a family consistent (all draft tokens
+  use `blip`, all accepted ones use `ping`).
+- Add a new effect by writing a generator in `synth.py` (stereo `(n, 2)` array; keep
+  energy above about 150 Hz because phone speakers cannot play lower), adding it to
+  `GENERATORS` and `SFX_NAMES`, and adding a row to `shared/audio/LICENSES.md`.
+- The music bed is `music_bed` (a 32 s looping stereo pad with bass, air and echoing
+  plucks, also synthesized). `make mix` loops it under the video and ducks it a few
+  dB under each effect (sidechain), so effects stay clear. To use another track, pass `MUSIC=path`, and
   record its source, license and attribution in `shared/audio/LICENSES.md` first.
   YouTube Audio Library tracks are YouTube-only, CC-BY tracks need credit in the
   description, and a Content ID claim on a Short over one minute can block it.
-- Levels (dBFS): effects peak near -7, the bed sits about 10 dB below them. Do not
+- Levels (dBFS): effects peak near -10, the bed sits about 10 dB below them. Do not
   normalize to -14 LUFS; with no voice that would lift the bed to full volume.
-  Final mixes measure near -28 LUFS integrated, peak about -9 dBFS. Check by ear on a
+  Final mixes measure near -24 LUFS integrated. Check by ear on a
   phone; adjust with `--music-gain` in `scripts/mix_audio.py`.
 
 ## 6. Preview, render, mix
