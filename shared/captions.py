@@ -22,6 +22,8 @@ from manim import (
 
 from shared.theme import (
     BODY_SIZE,
+    CAPTION_MAX_CHARS,
+    CAPTION_Y,
     MUTED,
     READ_PAUSE,
     SURFACE,
@@ -92,9 +94,9 @@ class CaptionTrack:
         self,
         scene: Scene,
         *,
-        position: tuple[float, float] = (0.0, -3.5),
+        position: tuple[float, float] = (0.0, CAPTION_Y),
         font_size: float = BODY_SIZE,
-        max_chars: int = 40,
+        max_chars: int = CAPTION_MAX_CHARS,
         time_offset: float = 0.0,
     ) -> None:
         self.scene = scene

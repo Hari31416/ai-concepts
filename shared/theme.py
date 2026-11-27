@@ -56,6 +56,13 @@ TRANSITION_TIME = 0.6
 STEP_TIME = 1.0
 READ_PAUSE = 1.5
 
+# Captions in the 16:9 frame (8 units tall, bottom edge at y = -4). A two-line caption
+# pill is about 1.2 units tall, so centring it at CAPTION_Y keeps it inside the frame
+# with a small margin. Keep diagrams above CONTENT_BOTTOM.
+CAPTION_Y = -3.05
+CAPTION_MAX_CHARS = 56
+CONTENT_BOTTOM = -2.3
+
 # YouTube Shorts (9:16). The frame is 9 x 16 scene units (see manim_shorts.cfg).
 # YouTube's interface covers roughly the bottom 20% (title, channel, progress bar)
 # and the right 12% (buttons), so keep captions and key diagrams inside the safe

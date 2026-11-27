@@ -13,7 +13,9 @@ from shared.captions import (
     reading_time,
     wrap_caption,
 )
-from shared.theme import READ_PAUSE
+from manim import config
+
+from shared.theme import CAPTION_MAX_CHARS, CONTENT_BOTTOM, READ_PAUSE
 
 
 def test_reading_time_uses_minimum_for_short_text() -> None:
@@ -79,3 +81,12 @@ def test_track_time_offset_shifts_cues() -> None:
     track.show("Offset caption.")
     track.clear()
     assert track.cues[0].start == 10.0
+
+
+def test_default_landscape_caption_fits_inside_frame() -> None:
+    track = CaptionTrack(MagicMock())
+    two_lines = " ".join(["word"] * 30)[: CAPTION_MAX_CHARS * 2 - 4]
+    pill = track._build(two_lines)
+    assert pill.get_bottom()[1] > -config.frame_height / 2
+    assert pill.get_top()[1] < CONTENT_BOTTOM + 0.2
+    assert pill.width < config.frame_width - 1.0
