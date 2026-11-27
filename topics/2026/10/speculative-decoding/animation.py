@@ -39,6 +39,7 @@ from manim import (
     linear,
 )
 
+from shared.captions import CaptionTrack
 from shared.theme import (
     ACCENT,
     BACKGROUND,
@@ -922,16 +923,19 @@ class SpeculativeDecoding(Scene):
 
     def construct(self) -> None:
         apply_theme(self)
+        caps = CaptionTrack(self)
 
         # ---------------------------------------------------------
         # Act 1: The Memory Bandwidth Bottleneck
         # ---------------------------------------------------------
+        caps.show("Why is a giant model slow? It waits on memory, not math.")
         p1_title = title("1. The Memory Bandwidth Bottleneck")
         self.play(Write(p1_title))
+        caps.hold()
 
         hbm_panel = panel(
             width=3.6, height=3.6, fill_color=SURFACE, stroke_color=BORDER
-        ).move_to(LEFT * 4.2 + UP * 0.2)
+        ).move_to(LEFT * 4.2 + UP * 0.4)
         hbm_lbl = text(
             "GPU Memory (HBM)", font_size=LABEL_SIZE, color=TEXT, weight="BOLD"
         ).next_to(hbm_panel.get_top(), DOWN, buff=0.25)
@@ -959,7 +963,7 @@ class SpeculativeDecoding(Scene):
 
         compute_panel = panel(
             width=3.6, height=3.6, fill_color=SURFACE, stroke_color=BORDER
-        ).move_to(RIGHT * 4.2 + UP * 0.2)
+        ).move_to(RIGHT * 4.2 + UP * 0.4)
         compute_lbl = text(
             "Tensor Cores", font_size=LABEL_SIZE, color=TEXT, weight="BOLD"
         ).next_to(compute_panel.get_top(), DOWN, buff=0.25)
@@ -995,7 +999,9 @@ class SpeculativeDecoding(Scene):
         )
         bus_group = VGroup(bus_line_top, bus_line_bot, bus_lbl)
 
+        caps.show("A 70B model's weights sit far from the compute.")
         self.play(FadeIn(hbm_group), FadeIn(compute_group), FadeIn(bus_group))
+        caps.hold()
 
         transfer_packet = RoundedRectangle(
             width=2.0,
@@ -1011,6 +1017,7 @@ class SpeculativeDecoding(Scene):
         ).move_to(transfer_packet)
         packet = VGroup(transfer_packet, packet_lbl)
 
+        caps.show("To produce one token, all 140 GB must cross the bus.")
         self.play(FadeIn(packet))
         self.play(packet.animate.move_to(RIGHT * 1.35 + UP * 0.65), run_time=1.2)
 
@@ -1022,25 +1029,17 @@ class SpeculativeDecoding(Scene):
             fill_opacity=0.95,
             stroke_color=ENTITY_A,
             stroke_width=2,
-        ).move_to(RIGHT * 4.2 + UP * 0.2)
+        ).move_to(RIGHT * 4.2 + UP * 0.4)
         token_txt = text(
             "Token 1 Emitted", font_size=16, color=ENTITY_A, weight="BOLD"
         ).move_to(token_emitted)
         token_group = VGroup(token_emitted, token_txt)
 
         self.play(FadeOut(packet), FadeIn(token_group))
+        caps.hold()
 
-        p1_banner = panel(
-            width=11.2, height=0.85, fill_color=SURFACE, stroke_color=SUCCESS
-        ).move_to(DOWN * 2.6)
-        p1_msg = text(
-            "Insight: Tensor cores are starved! Parallel verification of K tokens takes almost the same time.",
-            font_size=16,
-            color=SUCCESS,
-            weight="BOLD",
-        ).move_to(p1_banner)
-        self.play(FadeIn(p1_banner), Write(p1_msg))
-        self.wait(1.8)
+        caps.show("Cores sit idle, so checking K tokens at once is cheap.")
+        caps.hold(extra=1.0)
 
         p1_all = VGroup(
             p1_title,
@@ -1048,16 +1047,16 @@ class SpeculativeDecoding(Scene):
             compute_group,
             bus_group,
             token_group,
-            p1_banner,
-            p1_msg,
         )
         self.play(FadeOut(p1_all))
 
         # ---------------------------------------------------------
         # Act 2: The Speculative Loop with Parallel Query Batching
         # ---------------------------------------------------------
+        caps.show("Trick: a tiny model guesses, the big one checks.")
         p2_title = title("2. The Speculative Loop: Parallel Verification")
         self.play(Write(p2_title))
+        caps.hold()
 
         p2_sub = text(
             "Phase 1: Draft Model sequentially predicts K = 4 candidate tokens",
@@ -1065,6 +1064,7 @@ class SpeculativeDecoding(Scene):
             color=ENTITY_B,
             weight="BOLD",
         ).move_to(UP * 2.2)
+        caps.show("The draft model cheaply guesses four tokens in a row.")
         self.play(Write(p2_sub))
 
         prompt_the = make_token_box("The", color=TEXT, border_color=BORDER)
@@ -1090,8 +1090,9 @@ class SpeculativeDecoding(Scene):
         self.play(FadeIn(prompt_grp))
         for tok in [g1, g2, g3, g4]:
             self.play(FadeIn(tok, shift=RIGHT * 0.15), run_time=0.25)
-        self.wait(0.5)
+        caps.hold()
 
+        caps.show("The big model then scores every prefix in one pass.")
         self.play(FadeOut(p2_sub))
         p2_batch_title = text(
             "Phase 2: Target Model verifies ALL prefix queries simultaneously in 1 batch",
@@ -1208,7 +1209,7 @@ class SpeculativeDecoding(Scene):
             ),
             run_time=1.0,
         )
-        self.wait(1.0)
+        caps.hold()
 
         # Transition to Phase 3: Verification
         self.play(
@@ -1225,6 +1226,7 @@ class SpeculativeDecoding(Scene):
             color=SUCCESS,
             weight="BOLD",
         ).move_to(UP * 2.2)
+        caps.show("Each guess is compared with the big model's own pick.")
         self.play(Write(p2_verif_title))
 
         final_the = make_token_box("The", color=TEXT, border_color=BORDER)
@@ -1293,6 +1295,7 @@ class SpeculativeDecoding(Scene):
             .align_to(t_outputs, LEFT)
         )
         self.play(FadeIn(t_label), FadeIn(t_outputs))
+        caps.hold()
 
         def make_chk(tok: VGroup) -> Text:
             c = text("✓", font_size=20, color=SUCCESS, weight="BOLD")
@@ -1313,6 +1316,7 @@ class SpeculativeDecoding(Scene):
         v2 = make_token_box("fox", color=TEXT, border_color=SUCCESS).move_to(fg2)
         v3 = make_token_box("jumps", color=TEXT, border_color=SUCCESS).move_to(fg3)
 
+        caps.show("Matches are kept; the first mismatch is rejected.")
         self.play(
             FadeIn(c1),
             FadeIn(c2),
@@ -1324,6 +1328,7 @@ class SpeculativeDecoding(Scene):
         )
 
         self.play(FadeIn(cr4), fg4.animate.set_stroke(color=ERROR))
+        caps.hold()
 
         v4_corrected = make_token_box(
             "over", color=TEXT, border_color=ENTITY_A
@@ -1331,6 +1336,7 @@ class SpeculativeDecoding(Scene):
         v4_tag = text(
             "Target Prediction Adopted", font_size=12, color=ENTITY_A, weight="BOLD"
         ).next_to(v4_corrected, DOWN, buff=0.2)
+        caps.show("The big model's own token fills the gap: nothing lost.")
         self.play(
             FadeOut(fg4),
             FadeOut(cr4),
@@ -1338,18 +1344,10 @@ class SpeculativeDecoding(Scene):
             FadeIn(v4_tag),
             run_time=0.6,
         )
+        caps.hold()
 
-        p2_banner = panel(
-            width=11.2, height=0.85, fill_color=SURFACE, stroke_color=SUCCESS
-        ).move_to(DOWN * 2.6)
-        p2_msg = text(
-            'Outcome: 4 verified tokens ["brown", "fox", "jumps", "over"] emitted from 1 target step!',
-            font_size=16,
-            color=SUCCESS,
-            weight="BOLD",
-        ).move_to(p2_banner)
-        self.play(FadeIn(p2_banner), Write(p2_msg))
-        self.wait(1.8)
+        caps.show("Result: four tokens from one big-model pass.")
+        caps.hold(extra=1.0)
 
         p2_all = VGroup(
             p2_title,
@@ -1366,14 +1364,13 @@ class SpeculativeDecoding(Scene):
             c1,
             c2,
             c3,
-            p2_banner,
-            p2_msg,
         )
         self.play(FadeOut(p2_all))
 
         # ---------------------------------------------------------
         # Act 3: Exact Distribution Preservation
         # ---------------------------------------------------------
+        caps.show("Does guessing change the answer? Not even slightly.")
         p3_title = title("3. Zero Quality Loss: Exact Target Distribution")
         self.play(Write(p3_title))
 
@@ -1381,14 +1378,15 @@ class SpeculativeDecoding(Scene):
             r"P(X = x) = \min(q(x), p(x)) + \max(0, p(x) - q(x)) = p(x)", font_size=25
         ).next_to(p3_title, DOWN, buff=0.25)
         self.play(FadeIn(formula))
+        caps.hold()
 
         vocab = ["A", "B", "C", "D"]
         p_vals = [0.60, 0.25, 0.10, 0.05]
         q_vals = [0.40, 0.40, 0.10, 0.10]
 
         base_line = Line(
-            LEFT * 4.4 + DOWN * 1.5,
-            RIGHT * 2.2 + DOWN * 1.5,
+            LEFT * 4.4 + DOWN * 0.9,
+            RIGHT * 2.2 + DOWN * 0.9,
             color=BORDER,
             stroke_width=2,
         )
@@ -1418,7 +1416,7 @@ class SpeculativeDecoding(Scene):
                 fill_opacity=0.7,
                 stroke_color=BORDER,
                 stroke_width=1.5,
-            ).move_to([col_center_x, -1.5 + h_overlap / 2.0, 0])
+            ).move_to([col_center_x, -0.9 + h_overlap / 2.0, 0])
 
             if residual_p > 0:
                 h_res = residual_p * scale_h
@@ -1429,7 +1427,7 @@ class SpeculativeDecoding(Scene):
                     fill_opacity=0.75,
                     stroke_color=BORDER,
                     stroke_width=1.5,
-                ).move_to([col_center_x, -1.5 + h_overlap + h_res / 2.0, 0])
+                ).move_to([col_center_x, -0.9 + h_overlap + h_res / 2.0, 0])
                 bar_col = VGroup(bar_overlap, bar_res)
             elif surplus_q > 0:
                 h_surplus = surplus_q * scale_h
@@ -1440,22 +1438,23 @@ class SpeculativeDecoding(Scene):
                     fill_opacity=0.4,
                     stroke_color=ERROR,
                     stroke_width=1.5,
-                ).move_to([col_center_x, -1.5 + h_overlap + h_surplus / 2.0, 0])
+                ).move_to([col_center_x, -0.9 + h_overlap + h_surplus / 2.0, 0])
                 bar_col = VGroup(bar_overlap, bar_surplus)
             else:
                 bar_col = VGroup(bar_overlap)
 
             tok_lbl = text(
                 f'"{token_name}"', font_size=19, color=TEXT, weight="BOLD"
-            ).move_to([col_center_x, -1.8, 0])
+            ).move_to([col_center_x, -1.2, 0])
             labels_group.add(tok_lbl)
             bar_groups.add(bar_col)
 
+        caps.show("Green marks where draft and target agree on the odds.")
         self.play(FadeIn(bar_groups), FadeIn(labels_group))
 
         legend_box = panel(
             width=3.6, height=2.3, fill_color=SURFACE, stroke_color=BORDER
-        ).move_to(RIGHT * 4.4 + DOWN * 0.2)
+        ).move_to(RIGHT * 4.4 + UP * 0.2)
         leg_title = text(
             "Probability Breakdown", font_size=17, color=TEXT, weight="BOLD"
         )
@@ -1494,24 +1493,18 @@ class SpeculativeDecoding(Scene):
         )
         legend_grp = VGroup(legend_box, legend_content)
         self.play(FadeIn(legend_grp))
+        caps.hold()
 
         bracket_a = Brace(bar_groups[0], LEFT, color=ENTITY_A)
         label_a = text("Sum = p(A) = 0.60", font_size=15, color=ENTITY_A).next_to(
             bracket_a, LEFT, buff=0.1
         )
+        caps.show("Resampling the shortfall tops each bar up to exactly p.")
         self.play(Create(bracket_a), FadeIn(label_a))
+        caps.hold()
 
-        p3_banner = panel(
-            width=11.2, height=0.85, fill_color=SURFACE, stroke_color=SUCCESS
-        ).move_to(DOWN * 2.6)
-        p3_msg = text(
-            "Lossless Guarantee: Output distribution matches the target model exactly.",
-            font_size=17,
-            color=SUCCESS,
-            weight="BOLD",
-        ).move_to(p3_banner)
-        self.play(FadeIn(p3_banner), Write(p3_msg))
-        self.wait(1.8)
+        caps.show("So outputs follow the big model's distribution exactly.")
+        caps.hold(extra=1.0)
 
         p3_all = VGroup(
             p3_title,
@@ -1522,23 +1515,23 @@ class SpeculativeDecoding(Scene):
             legend_grp,
             bracket_a,
             label_a,
-            p3_banner,
-            p3_msg,
         )
         self.play(FadeOut(p3_all))
 
         # ---------------------------------------------------------
         # Act 4: Wall-Clock Speedup Timeline
         # ---------------------------------------------------------
+        caps.show("So how much faster is it on the clock?")
         p4_title = title("4. Wall-Clock Speedup: Standard vs Speculative")
         self.play(Write(p4_title))
+        caps.hold()
 
         row1_lbl = text(
             "Standard Autoregressive (4 Tokens)",
             font_size=18,
             color=MUTED,
             weight="BOLD",
-        ).move_to(LEFT * 3.3 + UP * 1.6)
+        ).move_to(LEFT * 3.3 + UP * 2.3)
         blocks_ar = VGroup()
         for i in range(4):
             b = RoundedRectangle(
@@ -1561,16 +1554,18 @@ class SpeculativeDecoding(Scene):
         ar_time = text(
             "Total Latency: 4.0 × T_target", font_size=16, color=MUTED
         ).next_to(ar_brace, DOWN, buff=0.08)
+        caps.show("Standard decoding pays one big-model pass per token.")
         self.play(
             FadeIn(row1_lbl), FadeIn(blocks_ar), Create(ar_brace), FadeIn(ar_time)
         )
+        caps.hold()
 
         row2_lbl = text(
             "Speculative Decoding (4 Tokens)",
             font_size=18,
             color=SUCCESS,
             weight="BOLD",
-        ).move_to(LEFT * 3.5 + DOWN * 0.7)
+        ).move_to(LEFT * 3.5 + UP * 0.0)
         draft_blocks = VGroup()
         for i in range(3):
             db = RoundedRectangle(
@@ -1608,9 +1603,11 @@ class SpeculativeDecoding(Scene):
         spec_time = text(
             "Total Latency: ~1.4 × T_target", font_size=16, color=SUCCESS, weight="BOLD"
         ).next_to(spec_brace, DOWN, buff=0.08)
+        caps.show("Speculation: three cheap drafts plus one verify pass.")
         self.play(
             FadeIn(row2_lbl), FadeIn(spec_blocks), Create(spec_brace), FadeIn(spec_time)
         )
+        caps.hold()
 
         callout_box = panel(
             width=3.2, height=2.5, fill_color=SURFACE, stroke_color=ACCENT
@@ -1628,6 +1625,8 @@ class SpeculativeDecoding(Scene):
             .move_to(callout_box)
         )
 
+        caps.show("About 1.4 passes instead of 4: roughly 2.8x faster.")
         self.play(FadeIn(callout_box), FadeIn(metric_group))
         self.play(Circumscribe(metric_num, color=ACCENT, run_time=1.2))
-        self.wait(2.5)
+        caps.hold(extra=1.5)
+        caps.finish()

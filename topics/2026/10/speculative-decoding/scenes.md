@@ -86,7 +86,36 @@ The animation begins with the hardware reality of autoregressive decoding: loadi
 
 ## Scene 5: Consolidated Master Video
 
-- Duration: ~65 seconds
+- Duration: ~77 seconds (paced by caption reading time)
 - Scene Class: SpeculativeDecoding
 - Output Asset: `video/SpeculativeDecoding.mp4`, `images/SpeculativeDecoding.png`
 - Purpose: Seamlessly transitions through all four stages in a single unified presentation video for the topic.
+
+### Caption beats (16:9, burned in, `video/SpeculativeDecoding.srt`)
+
+Voiceless: the captions are the narration. Each beat is shown first, then the matching
+animation plays, then the scene holds until the caption has been readable long enough.
+Only the consolidated scene is captioned; the four individual scenes are not yet.
+Takeaway banners sit above the caption area (bottom edge at y = -2.25).
+
+| Act | Caption | Accompanies |
+| --- | ------- | ----------- |
+| 1 | Why is a giant model slow? It waits on memory, not math. | Title writes in |
+| 1 | A 70B model's weights sit far from the compute. | HBM, tensor cores and bus appear |
+| 1 | To produce one token, all 140 GB must cross the bus. | Weight packet crosses, token emitted |
+| 1 | Cores sit idle, so checking K tokens at once is cheap. | Insight banner |
+| 2 | Trick: a tiny model guesses, the big one checks. | Title writes in |
+| 2 | The draft model cheaply guesses four tokens in a row. | Phase 1: draft tokens appear |
+| 2 | The big model then scores every prefix in one pass. | Phase 2: four prefix queries in one batch |
+| 2 | Each guess is compared with the big model's own pick. | Phase 3: draft row and target outputs |
+| 2 | Matches are kept; the first mismatch is rejected. | Checkmarks and the cross on "under" |
+| 2 | The big model's own token fills the gap: nothing lost. | "under" replaced by "over" |
+| 2 | Result: four tokens from one big-model pass. | Outcome banner |
+| 3 | Does guessing change the answer? Not even slightly. | Title and formula |
+| 3 | Green marks where draft and target agree on the odds. | Bars and legend |
+| 3 | Resampling the shortfall tops each bar up to exactly p. | Brace on p(A) = 0.60 |
+| 3 | So outputs follow the big model's distribution exactly. | Lossless guarantee banner |
+| 4 | So how much faster is it on the clock? | Title writes in |
+| 4 | Standard decoding pays one big-model pass per token. | Four sequential passes |
+| 4 | Speculation: three cheap drafts plus one verify pass. | Three drafts and one verify block |
+| 4 | About 1.4 passes instead of 4: roughly 2.8x faster. | Speedup callout (illustrative timings) |
