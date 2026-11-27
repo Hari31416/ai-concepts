@@ -33,7 +33,8 @@ def build_filter(*, has_audio: bool, duration: float, music_gain_db: float) -> s
     if not has_audio:
         return f"{music};[m]alimiter=limit={PEAK_LIMIT}:level=0[a]"
     return (
-        f"{music};[0:a]aformat=channel_layouts=stereo[s];"
+        f"{music};[0:a]aformat=channel_layouts=stereo,"
+        f"apad=whole_dur={duration:.3f}[s];"
         f"[s][m]amix=inputs=2:duration=first:normalize=0,"
         f"alimiter=limit={PEAK_LIMIT}:level=0[a]"
     )

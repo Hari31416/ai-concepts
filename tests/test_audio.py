@@ -69,6 +69,8 @@ def test_filter_with_effects_mixes_without_normalizing() -> None:
     assert f"alimiter=limit={PEAK_LIMIT}:level=0" in graph
     assert "volume=-22.0dB" in graph
     assert "afade=t=out:st=42.500" in graph
+    # Pad the effects track so the bed plays to the end of the video.
+    assert "apad=whole_dur=45.000" in graph
 
 
 def test_filter_without_effects_uses_music_only() -> None:
