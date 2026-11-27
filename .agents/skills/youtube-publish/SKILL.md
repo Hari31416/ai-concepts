@@ -73,15 +73,29 @@ redesigning them:
   a two-line pill is about 1.2 tall). Keep diagrams, labels and callouts above
   `CONTENT_BOTTOM` (-2.3) from `shared/theme.py`; move content up or shrink it slightly
   rather than letting it touch the caption. Do not overlap the scene title or a persistent
-  takeaway box; place a bottom takeaway above the caption, or clear the caption
-  (`caps.clear()`) while the takeaway is shown.
+  takeaway box. A bottom banner must end above `CONTENT_BOTTOM`: use a height of 0.6
+  or less centred at about `y = -1.95`. A banner at `y = -2.6` collides with the
+  caption. Otherwise clear the caption (`caps.clear()`) while the banner is shown.
+- Captions replace text-only takeaway banners ("Insight: ...", "Outcome: ..."). Delete
+  a banner that restates its caption; keep only callouts that show a number or a
+  diagram the caption does not.
+- Quick geometry check: the caption pill top is `CAPTION_Y` plus half the pill height
+  (0.43 for one line, 0.6 for two). Content bottom must be at least 0.15 above that.
+- Replace the `self.wait()` that follows a captioned step with `caps.hold()` or
+  `caps.hold(extra=...)`; a leftover wait doubles the pause. Keep a plain `wait` only
+  for a pause with no caption.
 - Keep the default size (`BODY_SIZE`) and at most `CAPTION_MAX_CHARS` (56) characters
   per line, two lines.
-  Landscape captions can be a little richer than Shorts (up to ~14 words) but still
-  one idea per beat. Do not repeat on-screen labels word for word; say why they matter.
+  Aim for 56 characters or fewer so each caption is one line. If a caption needs two
+  lines, reword it until the lines are balanced; never leave a one-word second line.
+  One idea per beat. Do not repeat on-screen labels word for word; say why they matter.
 - Captions replace voice-over, so write the beats as the narration a voice would
   have said. Pacing follows reading time (`hold()`), not an audio track.
-- Add the beats to `scenes.md`, scene by scene, next to the visuals they accompany.
+- Open the video, and each act or section title, with a question or a claim (the
+  Shorts hook rule applies in 16:9 too).
+- Add the beats to `scenes.md` next to the visuals they accompany. If only the
+  consolidated scene is captioned, put one table of beats under it, grouped by act,
+  and say so.
 
 ## 4. Shorts layout
 
@@ -126,6 +140,9 @@ The main animation uses the same commands without `FORMAT` (landscape is the def
 `make mix`. Captions are burned in at render time, so no extra step is needed to get
 them into the video; the `.srt` is written next to the `.mp4` for upload.
 
+`make preview` writes its `.mp4` and `.srt` to `<topic>/media/videos/<file>/<res>/`,
+not `video/`. Delete previews when done.
+
 Upload `<Scene>_final.mp4` and `<Scene>.srt`. Because `render` writes
 `video/<Scene>.mp4`, give each Short its own scene class so it never overwrites a
 landscape render. Manim also leaves `<Scene>.wav` next to the movie; delete it after
@@ -133,7 +150,9 @@ the mix.
 
 ## 7. Verify before upload
 
-1. Extract frames with `manim-visual-review` (try `--at` times near caption changes).
+1. Extract frames with `manim-visual-review`. Read the `.srt` and use `--at` with
+   each cue's end minus 0.3 s, plus a frame while each banner is up. Check the worst
+   case: a two-line caption together with a banner.
    Look at full-resolution frames for clipped text, caption overlap and safe zones.
    For the main animation, check that the caption never covers a diagram, label or
    takeaway, especially in scenes that were laid out before captions existed.
