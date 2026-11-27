@@ -125,6 +125,9 @@ above the `SHORTS_*_SIZE` values. Reduce content before shrinking text.
 - Add a new effect by writing a generator in `synth.py` (stereo `(n, 2)` array; keep
   energy above about 150 Hz because phone speakers cannot play lower), adding it to
   `GENERATORS` and `SFX_NAMES`, and adding a row to `shared/audio/LICENSES.md`.
+- Editing `synth.py`, the effect gains or the mix settings changes every video that
+  uses shared audio. Previously rendered videos keep their old sound until you
+  re-render and `make mix` them, so say which ones are out of date.
 - The music bed is `music_bed` (a 32 s looping stereo pad with bass, air and echoing
   plucks, also synthesized). `make mix` loops it under the video and ducks it a few
   dB under each effect (sidechain), so effects stay clear. To use another track, pass `MUSIC=path`, and
@@ -138,7 +141,9 @@ above the `SHORTS_*_SIZE` values. Reduce content before shrinking text.
 
 ## 6. Preview, render, mix
 
-Run from the repository root. `FORMAT=shorts` selects `manim_shorts.cfg` and
+Run from the repository root. Use `make preview` for drafts: `make render` writes
+`video/<Scene>.mp4`, so a low-quality `render` would overwrite the final-resolution
+file. `FORMAT=shorts` selects `manim_shorts.cfg` and
 `-r 1080,1920` (preview: `-r 480,854`).
 
 ```sh
@@ -172,7 +177,11 @@ the mix.
    For the main animation, check that the caption never covers a diagram, label or
    takeaway, especially in scenes that were laid out before captions existed.
 2. `ffprobe` the final file: 1080x1920 for Shorts, 1920x1080 for the main animation,
-   an audio stream present, duration as planned.
+   duration as planned. If it has audio, the audio stream must last as long as the
+   video (`ffprobe -show_entries stream=codec_type,duration`); a shorter audio stream
+   means the music stops early. Measure loudness with
+   `ffmpeg -i <file> -af ebur128 -f null -` (aim near -24 LUFS integrated, peaks
+   below -1 dBFS).
 3. Compare the `.srt` with the on-screen captions: same text, same times.
 4. Listen on a phone with the sound on and off. The video must read with sound off.
 5. Confirm every audio asset has a row in `shared/audio/LICENSES.md`.
