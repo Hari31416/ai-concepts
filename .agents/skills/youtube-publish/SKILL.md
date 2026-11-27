@@ -7,9 +7,10 @@ compatibility: Run from the repository root with uv, ffmpeg and ffprobe on PATH.
 # YouTube publish (voiceless, captions + light audio)
 
 Captions carry the narration, in every format: the vertical Short **and** the main
-16:9 animation (`animation.py`, its scenes, and the consolidated scene). Audio is a
-quiet music bed plus a few sound effects tied to real mechanism events. No recorded
-voice anywhere. Read `STYLE.md` for visuals. Plan scenes with `manim-composer`, write code with
+16:9 animation (`animation.py`, its scenes, and the consolidated scene). Audio is
+optional and quiet: a Short gets a music bed plus a few sound effects tied to real
+mechanism events; the main 16:9 animation is captions only unless the user asks for
+audio. No recorded voice anywhere. Read `STYLE.md` for visuals. Plan scenes with `manim-composer`, write code with
 `manimce-best-practices`, and check frames with `manim-visual-review` before this.
 
 ## 1. Pick the format
@@ -137,13 +138,15 @@ make mix     FILE=... SCENE=<Scene>                   # video/<Scene>_final.mp4
 
 The main animation uses the same commands without `FORMAT` (landscape is the default):
 `make render FILE=topics/<y>/<m>/<slug>/animation.py SCENE=<ConsolidatedScene>`, then
-`make mix`. Captions are burned in at render time, so no extra step is needed to get
-them into the video; the `.srt` is written next to the `.mp4` for upload.
+`make mix` only if the video should have the music bed or sound effects (skip it for
+a captions-only main animation and upload `<Scene>.mp4`). Captions are burned in at
+render time, so no extra step is needed to get them into the video; the `.srt` is
+written next to the `.mp4` for upload.
 
 `make preview` writes its `.mp4` and `.srt` to `<topic>/media/videos/<file>/<res>/`,
 not `video/`. Delete previews when done.
 
-Upload `<Scene>_final.mp4` and `<Scene>.srt`. Because `render` writes
+Upload `<Scene>_final.mp4` (or `<Scene>.mp4` when not mixed) and `<Scene>.srt`. Because `render` writes
 `video/<Scene>.mp4`, give each Short its own scene class so it never overwrites a
 landscape render. Manim also leaves `<Scene>.wav` next to the movie; delete it after
 the mix.
@@ -151,7 +154,8 @@ the mix.
 ## 7. Verify before upload
 
 1. Extract frames with `manim-visual-review`. Read the `.srt` and use `--at` with
-   each cue's end minus 0.3 s, plus a frame while each banner is up. Check the worst
+   each cue's start plus 0.5 s (the caption is fully faded in), plus a frame while
+   each banner is up. Check the worst
    case: a two-line caption together with a banner.
    Look at full-resolution frames for clipped text, caption overlap and safe zones.
    For the main animation, check that the caption never covers a diagram, label or

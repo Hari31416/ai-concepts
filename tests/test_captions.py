@@ -90,3 +90,16 @@ def test_default_landscape_caption_fits_inside_frame() -> None:
     assert pill.get_bottom()[1] > -config.frame_height / 2
     assert pill.get_top()[1] < CONTENT_BOTTOM + 0.2
     assert pill.width < config.frame_width - 1.0
+
+
+def test_show_fades_old_caption_out_before_new_one_in() -> None:
+    scene = MagicMock()
+    type(scene).time = property(lambda _self: 0.0)
+    track = CaptionTrack(scene)
+    track.show("First.")
+    scene.play.reset_mock()
+    track.show("Second.")
+    assert scene.play.call_count == 2
+    first_call, second_call = scene.play.call_args_list
+    assert type(first_call.args[0]).__name__ == "FadeOut"
+    assert type(second_call.args[0]).__name__ == "FadeIn"

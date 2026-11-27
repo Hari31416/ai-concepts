@@ -144,15 +144,18 @@ class CaptionTrack:
             self._current_text = ""
 
     def show(self, content: str, *, run_time: float = TRANSITION_TIME / 2) -> None:
-        """Replace the on-screen caption with `content`."""
+        """Replace the on-screen caption with `content`.
+
+        The old caption fades out before the new one fades in, so two captions are
+        never readable on top of each other.
+        """
         new = self._build(content)
-        self._close_cue()
-        anims: list[Any] = [FadeIn(new)]
         if self._current is not None:
-            anims.append(FadeOut(self._current))
+            self.scene.play(FadeOut(self._current), run_time=run_time / 2)
+        self._close_cue()
         self._current_start = self._now()
         self._shown_at = self._now()
-        self.scene.play(*anims, run_time=run_time)
+        self.scene.play(FadeIn(new), run_time=run_time)
         self._current, self._current_text = new, content
 
     def hold(self, extra: float = 0.0) -> None:
