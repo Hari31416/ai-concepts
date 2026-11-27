@@ -176,7 +176,9 @@ def problem(scene: Scene, caps: CaptionTrack) -> VGroup:
         packet
     )
     packet_grp = VGroup(packet, packet_lbl)
+    play_sfx(scene, "thump")  # the big model's weights
     scene.play(FadeIn(packet_grp, run_time=0.2))
+    play_sfx(scene, "stream")  # 140 GB crossing the memory bus
     scene.play(packet_grp.animate.move_to([X0, 3.2, 0]), run_time=0.7)
 
     out_tok = make_token_box(
@@ -225,7 +227,8 @@ def problem(scene: Scene, caps: CaptionTrack) -> VGroup:
     same_badge.move_to([X0, -1.45, 0])
     for c in cores:
         c.set_stroke(SUCCESS).set_fill(SUCCESS, 0.2)
-    play_sfx(scene, "pop")
+    for i in range(4):  # four tokens verified in one read
+        play_sfx(scene, f"ping_{i}", delay=0.1 * i)
     scene.play(
         ReplacementTransform(out_tok, four_toks),
         ReplacementTransform(idle_badge, same_badge),
@@ -281,8 +284,8 @@ def mechanism(scene: Scene, caps: CaptionTrack, head: VGroup) -> None:
         VGroup(prompt_toks, draft_toks).arrange(RIGHT, buff=0.1).move_to([X0, 4.7, 0])
     )
     scene.play(FadeIn(draft_hdr), FadeIn(prompt_toks), run_time=0.5)
-    for tok in draft_toks:
-        play_sfx(scene, "pop")
+    for i, tok in enumerate(draft_toks):  # light notes: the small model guessing
+        play_sfx(scene, f"blip_{i}")
         scene.play(FadeIn(tok, shift=RIGHT * 0.12), run_time=0.25)
     caps.hold()
 
@@ -332,7 +335,8 @@ def mechanism(scene: Scene, caps: CaptionTrack, head: VGroup) -> None:
         rows.add(VGroup(q_box, arr, p_box).arrange(RIGHT, buff=0.2))
     rows.arrange(DOWN, buff=0.26).next_to(mp_hdr, DOWN, buff=0.35)
 
-    play_sfx(scene, "tick")
+    play_sfx(scene, "riser")  # build-up, then the big model's weight lands
+    play_sfx(scene, "thump", delay=0.85)
     scene.play(FadeIn(mp_panel), FadeIn(mp_hdr), run_time=0.5)
     scene.play(
         LaggedStart(*(FadeIn(r, shift=DOWN * 0.1) for r in rows), lag_ratio=0.08),
@@ -352,7 +356,8 @@ def mechanism(scene: Scene, caps: CaptionTrack, head: VGroup) -> None:
             rows[i], RIGHT, buff=0.18
         )
         checks.add(chk)
-    play_sfx(scene, "tick")
+    for i in range(3):  # a rising bell per accepted guess
+        play_sfx(scene, f"ping_{i}", delay=0.15 * i)
     scene.play(
         FadeIn(checks),
         *(Indicate(draft_toks[i], color=SUCCESS, scale_factor=1.08) for i in range(3)),
@@ -380,7 +385,7 @@ def mechanism(scene: Scene, caps: CaptionTrack, head: VGroup) -> None:
     fix_mark = text("→ fix", font_size=22, color=ACCENT, weight="BOLD").next_to(
         rows[3], RIGHT, buff=0.14
     )
-    play_sfx(scene, "pop")
+    play_sfx(scene, "ping_3")  # the corrected token resolves the phrase
     scene.play(
         FadeOut(cross),
         ReplacementTransform(bad_tok, fixed_tok),
@@ -406,6 +411,7 @@ def mechanism(scene: Scene, caps: CaptionTrack, head: VGroup) -> None:
 def payoff(scene: Scene, caps: CaptionTrack, head: VGroup) -> None:
     caps.show("One pass yields four exact tokens with zero quality loss.")
     others = [m for m in scene.mobjects if m is not head and m is not caps.current]
+    play_sfx(scene, "whoosh")
     scene.play(FadeOut(*others), run_time=0.7)
 
     speed_card = VGroup(
@@ -420,6 +426,7 @@ def payoff(scene: Scene, caps: CaptionTrack, head: VGroup) -> None:
     ).arrange(DOWN, buff=0.18)
     loss_card.move_to([X0, 1.1, 0])
 
+    play_sfx(scene, "ping_1")
     scene.play(FadeIn(speed_card, shift=UP * 0.2), run_time=0.6)
     scene.wait(0.4)
     play_sfx(scene, "chime")
